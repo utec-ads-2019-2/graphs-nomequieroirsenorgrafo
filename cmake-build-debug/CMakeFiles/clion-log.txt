@@ -1,0 +1,4 @@
+/snap/clion/85/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/usr/bin/make -DCMAKE_C_COMPILER=/usr/bin/cc -DCMAKE_CXX_COMPILER=/usr/bin/c++ -G "CodeBlocks - Unix Makefiles" /home/felix/2019-2/ADS-20192/PROJECT/graphs-nomequieroirsenorgrafo
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/felix/2019-2/ADS-20192/PROJECT/graphs-nomequieroirsenorgrafo/cmake-build-debug

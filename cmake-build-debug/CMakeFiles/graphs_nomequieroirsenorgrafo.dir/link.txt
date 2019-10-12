@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/graphs_nomequieroirsenorgrafo.dir/main.cpp.o  -o graphs_nomequieroirsenorgrafo 

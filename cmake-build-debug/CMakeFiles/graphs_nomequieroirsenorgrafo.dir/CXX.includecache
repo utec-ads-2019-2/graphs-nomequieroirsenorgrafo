@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/felix/2019-2/ADS-20192/PROJECT/graphs-nomequieroirsenorgrafo/Graph.h
+bits/stdc++.h
+-
+
+/home/felix/2019-2/ADS-20192/PROJECT/graphs-nomequieroirsenorgrafo/main.cpp
+Graph.h
+/home/felix/2019-2/ADS-20192/PROJECT/graphs-nomequieroirsenorgrafo/Graph.h
+bits/stdc++.h
+-
+
