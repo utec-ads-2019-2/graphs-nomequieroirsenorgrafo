@@ -12,9 +12,13 @@ public:
     explicit Json(char* file) {
 
     }
+//  Process a JSON and return a Graph
+    graph& parseJson() {
 
-    graph& getGraph() {
-
+    }
+//  Process a Graph and return a JSON
+    void parseGraph() {
+//  RMP: return void for now.
     }
 };
 
