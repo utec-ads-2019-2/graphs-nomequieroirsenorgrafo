@@ -15,6 +15,9 @@ struct Traits {
 
 template<typename Tr>
 class Graph {
+public:
+    typedef typename Tr::N N;
+    typedef typename Tr::E E;
 private:
     typedef Graph<Tr> self;
     typedef Node<self> node;
@@ -22,9 +25,6 @@ private:
 
     typedef vector<node *> NodeSeq;
     typedef list<edge *> EdgeSeq;
-
-    typedef typename Tr::N N;
-    typedef typename Tr::E E;
     typedef typename NodeSeq::iterator NodeIte;
     typedef typename EdgeSeq::iterator EdgeIte;
 
