@@ -13,6 +13,10 @@ public:
 
     }
 
+    Json* parseJson() {
+
+    }
+
     graph& getGraph() {
 
     }
