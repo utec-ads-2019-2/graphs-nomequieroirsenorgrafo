@@ -14,9 +14,7 @@ public:
     typedef typename G::N N;
     typedef typename G::E E;
 
-    Json(string fileName) {
-        this->fileName = fileName;
-    }
+    Json(string fileName) { this->fileName = fileName; }
 //  Process a JSON and return a Graph
     graph &parseJson() {
         ifstream file_input(this->fileName);
@@ -24,16 +22,8 @@ public:
 
         if (!file_input)
             throw runtime_error("The file doesn't exist");
-
-<<<<<<< HEAD
-    Json* parseJson() {
-
-    }
-
-    graph& getGraph() {
-=======
         file_input >> aeroportos;
->>>>>>> f0cfeb9096a3da7693d6655d170f72b054a4f0ce
+
 
         auto jsonSize = aeroportos.size();
         if (jsonSize <= 10)
@@ -42,6 +32,11 @@ public:
             }
         else
             cout << jsonSize << " aeropuertos" << endl;
+    }
+
+
+    graph& getGraph() {
+
     }
 //  Process a Graph and return a JSON
     void parseGraph() {

@@ -1,9 +1,8 @@
-//
-// Created by ASMX108 on 13/10/2019.
-//
-
 #ifndef GRAPHS_NOMEQUIEROIRSENORGRAFO_EDGE_H
 #define GRAPHS_NOMEQUIEROIRSENORGRAFO_EDGE_H
+
+#include <bits/stdc++.h>
+using namespace std;
 
 template<typename G>
 class Edge {

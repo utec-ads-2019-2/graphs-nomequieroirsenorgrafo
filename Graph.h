@@ -2,11 +2,8 @@
 #ifndef GRAPHS_NOMEQUIEROIRSENORGRAFO_GRAPH_H
 #define GRAPHS_NOMEQUIEROIRSENORGRAFO_GRAPH_H
 
-#include <bits/stdc++.h>
 #include "node.h"
 #include "edge.h"
-
-using namespace std;
 
 struct Traits {
     typedef char N;
