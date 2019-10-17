@@ -22,18 +22,17 @@ public:
 //  Process a JSON and return a Graph
     graph &parseJson() {
         ifstream file_input(this->fileName);
-        json aeroportos;
+        json airports;
 
         if (!file_input)
             throw runtime_error("The file doesn't exist");
-        file_input >> aeroportos;
+        file_input >> airports;
 
-
-        auto jsonSize = aeroportos.size();
+        auto jsonSize = airports.size();
 
         auto newgraph = new graph();
         //Add the nodes
-        for (json::iterator it = aeroportos.begin(); it != aeroportos.end(); ++it) {
+        for (json::iterator it = airports.begin(); it != airports.end(); ++it) {
             auto airport = *it;
 
             auto x = airport.at("Latitude").get<string>();
@@ -43,7 +42,7 @@ public:
         }
 
         //Add the edges
-        for (json::iterator it = aeroportos.begin(); it != aeroportos.end(); ++it) {
+        for (json::iterator it = airports.begin(); it != airports.end(); ++it) {
             auto airport = *it;
 
             auto tagFrom = airport.at("Id");
@@ -55,11 +54,16 @@ public:
             }
         }
 
-        cout << "Nodes -> " << newgraph->getNumberOfNodes() << endl;
-        cout << "Edges -> " << newgraph->getNumberOfEdges() << endl;
-
         if (file_input.is_open())
             file_input.close();
+
+        cout << "Nodes -> " << newgraph->getNumberOfNodes() << endl;
+        cout << "Edges -> " << newgraph->getNumberOfEdges() << endl;
+        cout << "Delete egde 4027 -> 3536 " << newgraph->deleteEdge("4027", "3536") << endl;
+        cout << "Delete egde 4024 -> 1767 " << newgraph->deleteEdge("4024", "1767") << endl;
+
+        cout << "Nodes -> " << newgraph->getNumberOfNodes() << endl;
+        cout << "Edges -> " << newgraph->getNumberOfEdges() << endl;
     }
 
     graph& getGraph() {

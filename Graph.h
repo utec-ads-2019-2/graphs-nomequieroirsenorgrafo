@@ -40,7 +40,6 @@ private:
 public:
     Graph() {}
 
-    /* FUNCTIONS */
     node* addNode(N tag, double x, double y) {
         auto newNode = new node(tag, x, y ); //Node or vertex
 
@@ -49,14 +48,20 @@ public:
     }
 
     bool addEdge(N from, N to) {
-        auto nodeFrom = findNode( from );
-        auto nodeTo = findNode( to );
-
-        if(!nodeFrom)
+        auto nodeFromIte = findNode( from );
+        auto nodeToIte = findNode( to );
+        node *nodeFrom = nullptr;
+        node *nodeTo = nullptr;
+        //Search nodes and create if don't exist
+        if( nodeFromIte != nodes.end() )
             nodeFrom = addNode(from, 0, 0);
+        else
+            nodeFrom = nodeFromIte->second;
 
-        if(!nodeTo)
+        if( nodeToIte != nodes.end() )
             nodeTo = addNode(to, 0, 0);
+        else
+            nodeTo = nodeToIte->second;
 
         auto weight = getDistance(nodeFrom, nodeTo);
 
@@ -68,18 +73,36 @@ public:
     }
 
     bool deleteNode(N tag) {
+        bool result=false;
+        auto nodeIte = findNode( tag );
 
+        if (nodeIte != nodes.end()) {
+            result = true;
+            nodes.erase(nodeIte);
+        }
+
+        return result;
     }
 
     bool deleteEdge(N from, N to) {
+        bool result=false;
+        auto edgeIte = findEdge(from, to);
 
+        if(edgeIte != edges.end() ) {
+            result = true;
+            edges.erase(edgeIte);
+        }
+
+        return result;
     }
 
-    node *findNode(N tag) {
-        return nodes[ tag ];
+    NodeIte findNode(N tag) {
+        return nodes.find(tag);
     }
 
-    edge *findEdge(N from, N to);
+    EdgeIte findEdge(N from, N to) {
+        return edges.find(from + to); //find(from + to);
+    }
 
     self prim(N data);
 
@@ -131,6 +154,7 @@ public:
 
     ~Graph() {
         this->nodes.clear();
+        this->edges.clear();
     }
 };
 
