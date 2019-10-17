@@ -14,13 +14,20 @@ private:
 public:
     Edge() = default;
 
-    explicit Edge(E data) : data{data}, nodes{nullptr} {}
+    Edge(E data) : data(data) {
+        //nodes = nullptr;
+    }
 
     E getData() const { return this->data; }
 
     node *getFrom() const { return nodes[0]; }
 
     node *getTo() const { return nodes[1]; }
+
+    void setNodes(node* nodeFrom, node* nodeTo) {
+        nodes[0] = nodeFrom;
+        nodes[1] = nodeTo;
+    }
 
     std::pair<node, node> getNodes() const { return {nodes[0], nodes[1]}; }
 
@@ -38,6 +45,4 @@ public:
         return nodes[0] == other.nodes[0] and nodes[1] == other.nodes[1];
     }
 };
-
-
 #endif //GRAPHS_NOMEQUIEROIRSENORGRAFO_EDGE_H
