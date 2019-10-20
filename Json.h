@@ -20,12 +20,12 @@ public:
     }
 
 //  Process a JSON and return a Graph
-    graph &parseJson() {
+    graph parseJson() {
         ifstream file_input(this->fileName);
         json airports;
 
         if (!file_input)
-            throw runtime_error("The file doesn't exist");
+            throw runtime_error("The JSON file doesn't exist");
         file_input >> airports;
 
         auto jsonSize = airports.size();
@@ -59,16 +59,21 @@ public:
 
         cout << "Nodes -> " << newgraph->getNumberOfNodes() << endl;
         cout << "Edges -> " << newgraph->getNumberOfEdges() << endl;
-        cout << "Delete egde 4027 -> 3536 " << newgraph->deleteEdge("4027", "3536") << endl;
-        cout << "Delete egde 4024 -> 1767 " << newgraph->deleteEdge("4024", "1767") << endl;
+
+        newgraph->deleteNode("4027");
+        cout << "Del aeropuerto/node 4027" << endl;
+        //cout << "Delete egde 4027 -> 3536 " << newgraph->deleteEdge("4027", "3536") << endl;
+        //cout << "Delete egde 4024 -> 1767 " << newgraph->deleteEdge("4024", "1767") << endl;
 
         cout << "Nodes -> " << newgraph->getNumberOfNodes() << endl;
         cout << "Edges -> " << newgraph->getNumberOfEdges() << endl;
+
+        return *newgraph;
     }
 
-    graph& getGraph() {
+/*    graph& getGraph() {
 
-    }
+    }*/
 
     void parseGraph() {
 //  RMP: return void for now.

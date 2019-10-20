@@ -20,8 +20,8 @@ public:
     typedef Node<self> node;
     typedef Edge<self> edge;
 
-    typedef map<N, node *> NodeSeq;
-    typedef map<N, edge *> EdgeSeq;
+    typedef unordered_map<N, node *> NodeSeq;
+    typedef unordered_map<N, edge *> EdgeSeq;
     typedef typename NodeSeq::iterator NodeIte;
     typedef typename EdgeSeq::iterator EdgeIte;
 private:
@@ -33,32 +33,33 @@ private:
     const double densityParameter = 0.5;
     //std::set<node*> nodeList;
     //std::set<edge> edgeList;
-    std::map<N, set<N>> adjList;
-    std::map<N, set<N>> adjList_Transposed;
+    unordered_map<N, unordered_map<N, N> > adjList;
+    std::unordered_map<N, set<N>> adjList_Transposed;
 //    bool is_directed; bool negativeWeight;
 
 public:
     Graph() {}
 
-    node* addNode(N tag, double x, double y) {
-        auto newNode = new node(tag, x, y ); //Node or vertex
+    node *addNode(N tag, double x, double y) {
+        auto newNode = new node(tag, x, y); //Node or vertex
 
-        nodes.insert({ tag, newNode});
+        nodes.insert({tag, newNode});
+
         return newNode;
     }
 
     bool addEdge(N from, N to) {
-        auto nodeFromIte = findNode( from );
-        auto nodeToIte = findNode( to );
+        auto nodeFromIte = findNode(from);
+        auto nodeToIte = findNode(to);
         node *nodeFrom = nullptr;
         node *nodeTo = nullptr;
         //Search nodes and create if don't exist
-        if( nodeFromIte != nodes.end() )
+        if (nodeFromIte == nodes.end())
             nodeFrom = addNode(from, 0, 0);
         else
             nodeFrom = nodeFromIte->second;
 
-        if( nodeToIte != nodes.end() )
+        if (nodeToIte == nodes.end())
             nodeTo = addNode(to, 0, 0);
         else
             nodeTo = nodeToIte->second;
@@ -67,28 +68,51 @@ public:
 
         auto newEdge = new edge(weight);
 
-        newEdge->setNodes( nodeFrom, nodeTo );
+        newEdge->setNodes(nodeFrom, nodeTo);
 
-        edges.insert( { from + to, newEdge });
+        edges.insert({from + to, newEdge});
+
+        addtoAdjacentList(from, to);
+
+        return true;
     }
 
     bool deleteNode(N tag) {
-        bool result=false;
-        auto nodeIte = findNode( tag );
+        bool result = false;
+        auto nodeIte = findNode(tag);
 
         if (nodeIte != nodes.end()) {
             result = true;
             nodes.erase(nodeIte);
         }
 
+        // Deletes edges with Node as origin and destination
+        deleteOutEdges(tag);
+        deleteInNodes(tag);
+
         return result;
     }
 
+    bool addtoAdjacentList(N fromNode, N toNode) {
+        unordered_map<N, N> auxEdges;
+
+        auto iteAdj = adjList.find(fromNode); //Iterator
+
+        if (iteAdj == adjList.end()) {
+            auxEdges.insert({{toNode, toNode}});
+            adjList.insert({fromNode, auxEdges});
+        } else {
+            iteAdj->second.insert({toNode, toNode});
+        }
+
+        return true;
+    }
+
     bool deleteEdge(N from, N to) {
-        bool result=false;
+        bool result = false;
         auto edgeIte = findEdge(from, to);
 
-        if(edgeIte != edges.end() ) {
+        if (edgeIte != edges.end()) {
             result = true;
             edges.erase(edgeIte);
         }
@@ -102,6 +126,30 @@ public:
 
     EdgeIte findEdge(N from, N to) {
         return edges.find(from + to); //find(from + to);
+    }
+
+    void deleteOutEdges(N tag) {
+        auto iteAdj = adjList.find(tag); //Iterator
+
+        if (iteAdj != adjList.end()) {
+            for (auto it = iteAdj->second.begin(); it != iteAdj->second.end(); ++it) {
+                deleteEdge(tag, it->first );
+            }
+            adjList.erase(tag);
+        }
+    }
+
+    void deleteInNodes(N tag) {
+        for (auto it = adjList.begin(); it != adjList.end(); ++it) {
+            auto iteAdj2 = it->second.find( tag );
+
+            if(iteAdj2 == it->second.end())
+                continue;
+
+            auto nodeFrom = it->first;
+            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+                deleteEdge(nodeFrom, tag );
+        }
     }
 
     self prim(N data);
@@ -127,17 +175,18 @@ public:
 
     //set<edge> getEdgeList() const { return edgeList; }
 
-    E getDistance(node* nodeFrom, node* nodeTo) {
+    E getDistance(node *nodeFrom, node *nodeTo) {
         E distance = 0;
         E x, y;
 
         x = pow(nodeTo->getX() - nodeFrom->getX(), 2);
         y = pow(nodeTo->getY() - nodeFrom->getY(), 2);
 
-        distance = sqrt( x + y);
+        distance = sqrt(x + y);
 
         return distance;
     }
+
     double getDensity();
 
     bool isSink(N data);
