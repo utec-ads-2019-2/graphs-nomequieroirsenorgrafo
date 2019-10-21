@@ -33,7 +33,7 @@ private:
     const double densityParameter = 0.5;
     //std::set<node*> nodeList;
     //std::set<edge> edgeList;
-    unordered_map<N, unordered_map<N, N> > adjList;
+    unordered_map<N, unordered_map<N, E> > adjList;
     std::unordered_map<N, set<N>> adjList_Transposed;
 //    bool is_directed; bool negativeWeight;
 
@@ -72,7 +72,7 @@ public:
 
         edges.insert({from + to, newEdge});
 
-        addtoAdjacentList(from, to);
+        addtoAdjacentList(from, to, weight);
 
         return true;
     }
@@ -93,19 +93,33 @@ public:
         return result;
     }
 
-    bool addtoAdjacentList(N fromNode, N toNode) {
-        unordered_map<N, N> auxEdges;
+    bool addtoAdjacentList(N fromNode, N toNode, E weight) {
+        unordered_map<N, E> auxEdges;
 
         auto iteAdj = adjList.find(fromNode); //Iterator
 
         if (iteAdj == adjList.end()) {
-            auxEdges.insert({{toNode, toNode}});
+            auxEdges.insert({{toNode, weight}});
             adjList.insert({fromNode, auxEdges});
         } else {
-            iteAdj->second.insert({toNode, toNode});
+            iteAdj->second.insert({toNode, weight});
         }
 
         return true;
+    }
+
+    // Here!!! Felix
+    void recorridoMinimapita(N fromNode) {
+        unordered_map<N, E> miniMapita;
+        auto iteAdj = adjList.find(fromNode); //busco el nodo
+        cout << "\n\ndel nodo: " << fromNode << endl;
+        cout << "salen los nodos " << endl;
+        if (iteAdj != adjList.end()) //valida que exista
+            miniMapita = iteAdj->second;
+            // recorro el minimapita que son los nodos salientes
+            for (auto it = miniMapita.begin() ; it != miniMapita.end() ; ++it) {
+                cout << it->first << " con peso" <<it->second << endl;
+            }
     }
 
     bool deleteEdge(N from, N to) {
@@ -133,7 +147,7 @@ public:
 
         if (iteAdj != adjList.end()) {
             for (auto it = iteAdj->second.begin(); it != iteAdj->second.end(); ++it) {
-                deleteEdge(tag, it->first );
+                deleteEdge(tag, it->first);
             }
             adjList.erase(tag);
         }
@@ -141,14 +155,14 @@ public:
 
     void deleteInNodes(N tag) {
         for (auto it = adjList.begin(); it != adjList.end(); ++it) {
-            auto iteAdj2 = it->second.find( tag );
+            auto iteAdj2 = it->second.find(tag);
 
-            if(iteAdj2 == it->second.end())
+            if (iteAdj2 == it->second.end())
                 continue;
 
             auto nodeFrom = it->first;
             for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-                deleteEdge(nodeFrom, tag );
+                deleteEdge(nodeFrom, tag);
         }
     }
 
@@ -187,7 +201,12 @@ public:
         return distance;
     }
 
-    double getDensity();
+    double getDensity() {
+        double V = getNumberOfNodes();
+        double E = getNumberOfEdges();
+
+        return E / (V * (V - 1));
+    }
 
     bool isSink(N data);
 
