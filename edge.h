@@ -9,25 +9,17 @@ class Edge {
 private:
     typedef typename G::E E;
     typedef typename G::node node;
+public:
     E data;
     node *nodes[2]; // Another option: node* from; node* to;
-public:
+
     Edge() = default;
 
     Edge(E data) : data(data) {
-        //nodes = nullptr;
+        
     }
 
     E getData() const { return this->data; }
-
-    node *getFrom() const { return nodes[0]; }
-
-    node *getTo() const { return nodes[1]; }
-
-    void setNodes(node* nodeFrom, node* nodeTo) {
-        nodes[0] = nodeFrom;
-        nodes[1] = nodeTo;
-    }
 
     std::pair<node, node> getNodes() const { return {nodes[0], nodes[1]}; }
 

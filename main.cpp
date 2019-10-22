@@ -4,7 +4,7 @@
 using namespace std;
 
 int main() {
-    graph test;
+    /*graph test;
     test.addNode("a",0.1, 0.2);
     test.addNode("b",0.2, 0.3);
     test.addNode("c",0.4, 0.5);
@@ -18,11 +18,11 @@ int main() {
     test.printGraph(); cout << endl;
 
     auto primGraph = test.prim("a");
-    primGraph.printGraph();
+    primGraph.printGraph();*/
 
-//    auto read = new Json<graph>("airportsTest.json");
-//    auto read = new Json<graph>("airports.json");
-//    read->parseJson();
+//   auto read = new Json<graph>("airportsTest.json");
+    auto read = new Json<graph>("airports.json");
+    read->parseJson();
 
     return 0;
 }

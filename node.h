@@ -15,9 +15,10 @@ public:
     typedef typename G::EdgeSeq EdgeSeq;
 private:
     EdgeSeq edges;
+public:
     N data;
     double x, y;
-public:
+
     Node() : x(0), y(0) {}
 
     Node(N data, double _x, double _y) : data(data), x(_x), y(_y) {}
@@ -25,12 +26,6 @@ public:
     bool operator<(const Node &other) const { return this->data < other.data; }
 
     bool operator==(const Node &other) const { return this->data == other.data; }
-
-    N getData() const { return this->data; }
-
-    double getX() const { return this->x; }
-
-    double getY() const { return this->y; }
 
 };
 
