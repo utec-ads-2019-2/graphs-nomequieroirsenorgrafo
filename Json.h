@@ -69,7 +69,7 @@ public:
         cout << "Edges -> " << newgraph->getNumberOfEdges() << endl;
         printf("Densidad: %4.7f", newgraph->getDensity() );
 
-        newgraph->recorridoMinimapita("1767");
+//        newgraph->recorridoMinimapita("1767");
         return *newgraph;
     }
 

@@ -193,7 +193,7 @@ public:
         auto deleteEdge = findEdge(from, to);
         if (!deleteEdge) { return false; }
 
-        nodes.at(deleteEdge);
+//        nodes.at(deleteEdge);
 
         return true;
     }
