@@ -13,14 +13,13 @@ class Node {
 public:
     typedef typename G::N N;
     typedef typename G::EdgeSeq EdgeSeq;
-private:
     EdgeSeq edges;
-public:
     N data;
     double x, y;
 
+public:
     Node() : x(0), y(0) {}
-
+    Node(N data) : data(data), x(0), y(0) {}
     Node(N data, double _x, double _y) : data(data), x(_x), y(_y) {}
 
     bool operator<(const Node &other) const { return this->data < other.data; }

@@ -4,7 +4,7 @@
 
 #include "node.h"
 #include "edge.h"
-
+#include <unordered_map>
 struct Traits {
     typedef string N;
     typedef float E;
@@ -28,46 +28,83 @@ private:
     NodeSeq nodes;
     NodeIte ni; //iterator for nodes (maybe for project 2)
     EdgeIte ei; //iterator for edges (maybe for project 2)
-
+    bool directed = false;
     unordered_map<N, multimap<E, N> > indexTable;
 public:
     Graph() {}
 
-    node *addVertex(N tag, double x, double y) {
+    node *addVertex(N tag, double x, double y)
+    {
         auto newNode = new node(tag, x, y); //Node or vertex
-
         nodes.insert({tag, newNode});
 
         return newNode;
     }
 
-    bool addEdge(N from, N to) {
-        auto nodeFromIte = findNode(from);
-        auto nodeToIte = findNode(to);
-        node *nodeFrom = nullptr;
-        node *nodeTo = nullptr;
-        //Search nodes and create if don't exist
-        if (nodeFromIte == nodes.end())
-            nodeFrom = addVertex(from, 0, 0);
-        else
-            nodeFrom = nodeFromIte->second;
+    node *addVertex(N tag)
+    {
+        auto newNode = new node(tag); //Node or vertex
+        nodes.insert({tag, newNode});
 
-        if (nodeToIte == nodes.end())
-            nodeTo = addVertex(to, 0, 0);
-        else
-            nodeTo = nodeToIte->second;
+        return newNode;
+    }
 
-        auto weight = getDistance(nodeFrom, nodeTo);
+    bool addEdge(N from, N to)
+    {
+//        if (findEdge(from, to)) { return false; }
+        auto itNewNodeFrom = nodes.find(from);
+        auto itNewNodeTo = nodes.find(to);
+        auto thisNodFrom = (itNewNodeFrom->second);
+        auto thisNodTo = (itNewNodeTo->second);
 
-        auto newEdge = new edge(weight);
+        auto newNodeFrom = new node{thisNodFrom->data, thisNodFrom->x, thisNodFrom->y};
+        auto newNodeTo = new node{thisNodTo->data, thisNodTo->x, thisNodTo->y};
+        auto weight = getDistance(newNodeFrom, newNodeTo);
 
-        newEdge->nodes[0] = nodeFrom;
-        newEdge->nodes[1] = nodeTo;
+        auto newEdgeFromTo = new edge(weight,newNodeFrom, newNodeTo);
+        auto newEdgeToFrom = new edge(weight, newNodeTo, newNodeFrom);
 
-        /*edges.insert({from + to, newEdge});*/
+        auto itNodesFrom = nodes.find(from);
+        auto itNodesTo = nodes.find(to);
+        /* For directed graph */
+        if (directed){
+            (itNodesFrom->second)->edges.emplace_back(newEdgeFromTo);
+            return true;
+        }
 
-        addtoIndexTable(from, to, weight);
+        (itNodesFrom->second)->edges.emplace_back(newEdgeFromTo);
+        (itNodesTo->second)->edges.emplace_back(newEdgeToFrom);
 
+        addToIndexTable(newNodeFrom->data, newNodeTo->data, weight);
+        return true;
+    }
+
+    bool addEdge(N from, N to, E weight)
+    {
+//        if (findEdge(from, to)) { return false; }
+        auto itNewNodeFrom = nodes.find(from);
+        auto itNewNodeTo = nodes.find(to);
+        auto thisNodFrom = (itNewNodeFrom->second);
+        auto thisNodTo = (itNewNodeTo->second);
+
+        auto newNodeFrom = new node{thisNodFrom->data, thisNodFrom->x, thisNodFrom->y};
+        auto newNodeTo = new node{thisNodTo->data, thisNodTo->x, thisNodTo->y};
+
+        auto newEdgeFromTo = new edge(weight,newNodeFrom, newNodeTo);
+        auto newEdgeToFrom = new edge(weight, newNodeTo, newNodeFrom);
+
+        auto itNodesFrom = nodes.find(from);
+        auto itNodesTo = nodes.find(to);
+        /* For directed graph */
+        if (directed){
+            (itNodesFrom->second)->edges.emplace_back(newEdgeFromTo);
+            return true;
+        }
+
+        (itNodesFrom->second)->edges.emplace_back(newEdgeFromTo);
+        (itNodesTo->second)->edges.emplace_back(newEdgeToFrom);
+
+        addToIndexTable(newNodeFrom->data, newNodeTo->data, weight);
         return true;
     }
 
@@ -135,34 +172,8 @@ public:
         return predecesor;
     }
 
-    /*void solve(N ini) {
-        queue<N> cola;
-        unordered_map<N, bool> visited; //Nodes visited (BFS)
 
-        for(auto node=nodes.begin() ; node != nodes.end() ; ++node )
-            visited.insert({ (*node).weight , false});
-
-        cola.push(ini);
-        visited[ ini ] = true;
-
-        while(!cola.empty()) {
-            auto nodeAux = cola.front();
-            cola.pop();
-
-            auto result = indexTable[ nodeAux ];
-            auto neighbours = result->second;
-
-            for(auto it=neighbours.begin(); it != neighbours.end() ; ++it) {
-                if(!visited[*it]) {
-                    cola.push( *it );
-                    visited[ *it ] = true;
-                }
-            }
-        }
-
-    }*/
-
-    bool addtoIndexTable(N fromNode, N toNode, E weight) {
+    bool addToIndexTable(N fromNode, N toNode, E weight) {
         multimap<E, N> auxEdges;
 
         auto iteAdj = indexTable.find(fromNode); //Iterator
@@ -178,26 +189,38 @@ public:
     }
 
     bool deleteEdge(N from, N to) {
-        bool result = false;
-        auto edgeIte = findEdge(from, to);
+        /*FALTA COMPLETAR*/
+        auto deleteEdge = findEdge(from, to);
+        if (!deleteEdge) { return false; }
 
-//        if (edgeIte != edges.end()) {
-//            result = true;
-//            edges.erase(edgeIte);
-//        }
+        nodes.at(deleteEdge);
 
-        return result;
+        return true;
     }
 
     NodeIte findNode(N tag) { return nodes.find(tag); }
 
-    EdgeIte findEdge(N from, N to) { /*return edges.find(from + to);*/ }
+    bool findEdge(N from, N to)
+    {
+        auto nodeFrom = nodes[from];
+        if (!nodeFrom) return false;
 
-    void deleteOutEdges(N tag) {
-        auto iteAdj = indexTable.find(tag); //Iterator
+        auto nodeTo = nodes[to];
+        if (!nodeTo) return false;
 
-        if (iteAdj != indexTable.end()) {
-            for (auto it = iteAdj->second.begin(); it != iteAdj->second.end(); ++it) {
+        for (auto && edg: nodeFrom->edges)
+            if (edg->nodes[1]->data == nodeTo->data)
+                return true;
+
+        return false;
+    }
+
+    void deleteOutEdges(N tag)
+    {
+        auto iteIndexTable = indexTable.find(tag); //Iterator
+
+        if (iteIndexTable != indexTable.end()) {
+            for (auto it = iteIndexTable->second.begin(); it != iteIndexTable->second.end(); ++it) {
                 deleteEdge(tag, it->second);
             }
             indexTable.erase(tag);
@@ -216,21 +239,6 @@ public:
                 deleteEdge(nodeFrom, tag);
         }*/
     }
-
-    // Here!!! Felix
-    void recorridoMinimapita(N fromNode) {
-        multimap<E, N> miniMapita;
-        auto iteAdj = indexTable.find(fromNode); //busco el nodo
-        cout << "\n\ndel nodo: " << fromNode << endl;
-        cout << "salen los nodos " << endl;
-        if (iteAdj != indexTable.end()) //valida que exista
-            miniMapita = iteAdj->second;
-        // recorro el minimapita que son los nodos salientes
-        for (auto it = miniMapita.begin(); it != miniMapita.end(); ++it) {
-            cout << it->first << " con peso " << it->second << endl;
-        }
-    }
-
 
     /* STEPS (ERNESTO BOOK):
      * 1. Se crea un grafo M con los mismos vértices del grafo original G y sin arcos.

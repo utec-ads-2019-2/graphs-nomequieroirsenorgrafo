@@ -15,13 +15,17 @@ public:
 
     Edge() = default;
 
-    Edge(E data) : weight(data) {
+    Edge(E weight) : weight(weight) {}
 
+    Edge(node* from, node* to): weight(0){
+        this->nodes[0] = from;
+        this->nodes[1] = to;
     }
 
-    E getData() const { return this->weight; }
-
-    std::pair<node, node> getNodes() const { return {nodes[0], nodes[1]}; }
+    Edge(E weight, node* from, node* to):weight(weight){
+        this->nodes[0] = from;
+        this->nodes[1] = to;
+    }
 
     bool operator<(const Edge &other) const {
         if (this->weight != other.weight)
@@ -37,8 +41,6 @@ public:
         return nodes[0] == other.nodes[0] and nodes[1] == other.nodes[1];
     }
 
-    ~Edge() {
-        delete [] nodes;
-    }
+    ~Edge() { delete [] nodes; }
 };
 #endif //GRAPHS_NOMEQUIEROIRSENORGRAFO_EDGE_H
