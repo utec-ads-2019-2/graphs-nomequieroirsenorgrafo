@@ -21,7 +21,7 @@ public:
     typedef Edge<self> edge;
 
     typedef unordered_map<N, node *> NodeSeq;
-    typedef unordered_map<E, edge *> EdgeSeq;
+    typedef vector<edge *> EdgeSeq;
     typedef typename NodeSeq::iterator NodeIte;
     typedef typename EdgeSeq::iterator EdgeIte;
 private:
