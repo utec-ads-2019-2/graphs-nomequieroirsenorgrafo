@@ -34,8 +34,7 @@ private:
 public:
     Graph() {}
 
-    node *addNode(N tag, double x, double y)
-    {
+    node *addNode(N tag, double x, double y) {
         auto newNode = new node(tag, x, y); //Node or vertex
 
         nodes.insert({tag, newNode});
@@ -89,22 +88,69 @@ public:
         return result;
     }
 
-    void bfs() { //Breath First Search
+    unordered_map<N, N> bfs(N ini) { //Breath First Search
 
+        unordered_map<N, char> color; //(W)hite, (G)ray or (B)lack
+        unordered_map<N, int> distance;
+        unordered_map<N, N> predecesor;
+        queue<N> cola;
+
+        if (findNode(ini) == nodes.end()) {
+            auto msg = "Node " + ini + " doesn't exist";
+            throw runtime_error(msg);
+        }
+
+        for (auto node = nodes.begin(); node != nodes.end(); ++node) {
+            auto name = node->first;
+            if (name != ini) {
+                color.insert( {name, 'W'} );
+                distance.insert( {name, 0} );
+                predecesor.insert( {name, ""});
+            }
+         }
+
+        color[ini] = 'G';
+        distance[ini] = 0;
+
+        cola.push(ini);
+
+        while (!cola.empty()) {
+            auto nodeAux = cola.front();
+            cola.pop();
+
+            auto neighbours = indexTable[nodeAux];
+
+            for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
+                auto name = it->second;
+                if (color[name] == 'W') { //white
+                    color[name] = 'G'; //Gray
+
+                    distance[name] = distance[nodeAux] + 1;
+                    predecesor[name] = nodeAux;
+                    cola.push(name);
+                }
+            }
+            color[nodeAux] = 'B'; //Black
+        }
+
+        return predecesor;
     }
 
-    void solve(N tag) {
+    /*void solve(N ini) {
         queue<N> cola;
         unordered_map<N, bool> visited; //Nodes visited (BFS)
 
-        cola.push(tag);
-        visited[ tag ] = true;
+        for(auto node=nodes.begin() ; node != nodes.end() ; ++node )
+            visited.insert({ (*node).data , false});
+
+        cola.push(ini);
+        visited[ ini ] = true;
 
         while(!cola.empty()) {
-            auto node_ = cola.front();
+            auto nodeAux = cola.front();
             cola.pop();
 
-            auto result = indexTable[ node_ ];
+            auto result = indexTable[ nodeAux ];
             auto neighbours = result->second;
 
             for(auto it=neighbours.begin(); it != neighbours.end() ; ++it) {
@@ -115,7 +161,7 @@ public:
             }
         }
 
-    }
+    }*/
 
     bool addtoIndexTable(N fromNode, N toNode, E weight) {
         multimap<E, N> auxEdges;
@@ -145,7 +191,8 @@ public:
     }
 
     NodeIte findNode(N tag) { return nodes.find(tag); }
-    EdgeIte findEdge(N from, N to) { return edges.find(from + to);}
+
+    EdgeIte findEdge(N from, N to) { return edges.find(from + to); }
 
     void deleteOutEdges(N tag) {
         auto iteAdj = indexTable.find(tag); //Iterator
@@ -173,15 +220,15 @@ public:
 
     // Here!!! Felix
     void recorridoMinimapita(N fromNode) {
-        multimap <E, N> miniMapita;
+        multimap<E, N> miniMapita;
         auto iteAdj = indexTable.find(fromNode); //busco el nodo
         cout << "\n\ndel nodo: " << fromNode << endl;
         cout << "salen los nodos " << endl;
         if (iteAdj != indexTable.end()) //valida que exista
             miniMapita = iteAdj->second;
         // recorro el minimapita que son los nodos salientes
-        for (auto it = miniMapita.begin() ; it != miniMapita.end() ; ++it) {
-            cout << it->first << " con peso " <<it->second << endl;
+        for (auto it = miniMapita.begin(); it != miniMapita.end(); ++it) {
+            cout << it->first << " con peso " << it->second << endl;
         }
     }
 
@@ -210,8 +257,7 @@ public:
      *              v.key = w(u, v)
      * */
 
-    self prim(N startNode)
-    {
+    self prim(N startNode) {
         unordered_map<N, N> parent;
         unordered_map<N, bool> visitedNodes;
         unordered_map<N, E> weightEdges;
@@ -222,30 +268,28 @@ public:
 
         minHeap.push(make_pair(0, startNode));
         parent[startNode] = startNode;
-        while(!minHeap.empty())
-        {
+        while (!minHeap.empty()) {
             N curr = minHeap.top().second;
             E weig = minHeap.top().first;
             minHeap.pop();
 
-            if(visitedNodes[curr]) { continue; }
+            if (visitedNodes[curr]) { continue; }
             visitedNodes[curr] = true;
 
-            if(MST.nodes.find(curr) == MST.nodes.end()){
+            if (MST.nodes.find(curr) == MST.nodes.end()) {
 //                MST->addNode( , , );
             }
-            if(parent[curr] != curr){
+            if (parent[curr] != curr) {
 //                MST->addEdge( , , );
             }
             auto iteAdj = indexTable.find(startNode); //busco el nodo
 
             /* Itero sobre el minimapita*/
-            for (auto it = (iteAdj->second).begin() ; it != (iteAdj->second).end() ; ++it)
-            {
+            for (auto it = (iteAdj->second).begin(); it != (iteAdj->second).end(); ++it) {
                 auto w = it->first;
                 auto nd = it->second;
-                if(visitedNodes[nd]) { continue; }
-                if(weightEdges.find(nd) == weightEdges.end() || weightEdges[nd] < w){
+                if (visitedNodes[nd]) { continue; }
+                if (weightEdges.find(nd) == weightEdges.end() || weightEdges[nd] < w) {
                     parent[nd] = curr;
                     weightEdges[nd] = w;
                     minHeap.push(make_pair(w, nd));
@@ -257,17 +301,32 @@ public:
 
     self kruskal();
 
-    std::pair<bool, map<N, bool>> getBipartiteAndColors();
+    std::pair<bool, map<N, bool>> getBipartiteAndColors() {
+
+    }
 
     std::pair<int, map<N, int>> getStronglyConnectedComponents();
 
-    bool isConnected() { return getStronglyConnectedComponents().first == 1; }
+    //bool isConnected() { return getStronglyConnectedComponents().first == 1; }
+    bool isConnected() {
+        bool result=false;
+        auto firstNode = nodes.begin();
+
+        auto bfsResult = bfs( firstNode->first );
+
+        for(auto it = bfsResult.begin() ; it != bfsResult.end() ; ++it ) {
+            auto resultFind = nodes.find( it->second );
+            if ( resultFind != nodes.end() )
+                result = true;
+        }
+        return result;
+    }
 
     int getNumberOfNodes() const { return nodes.size(); }
+
     int getNumberOfEdges() const { return edges.size(); }
 
-    E getDistance(node *nodeFrom, node *nodeTo)
-    {
+    E getDistance(node *nodeFrom, node *nodeTo) {
         E distance = 0;
         E x, y;
 
@@ -279,8 +338,7 @@ public:
         return distance;
     }
 
-    double getDensity()
-    {
+    double getDensity() {
         double V = getNumberOfNodes();
         double E = getNumberOfEdges();
 
@@ -293,8 +351,7 @@ public:
 
     int getPosNode(N node);
 
-    void printGraph()
-    {
+    void printGraph() {
 //        cout << "Imprimiendo nodos" << endl;
 //        for(auto i: nodeList){
 //            cout << i.getTag() << " ";
@@ -306,13 +363,13 @@ public:
 //        }
 //        cout << endl;
 
-        unordered_map<E, N> miniMap;
+        multimap<E, N> miniMap;
         cout << "Imprimiendo la lista de adyacencia" << endl;
-        for (auto it = indexTable.begin(); it != indexTable.end(); it++){
-            cout << it->first<< " : { ";
+        for (auto it = indexTable.begin(); it != indexTable.end(); it++) {
+            cout << it->first << " : { ";
             miniMap = it->second;
-            for (auto  i =  miniMap.begin(); i != miniMap.end(); ++i){
-                cout << "(" << i->first << " : " << i->second << ") ";
+            for (auto i = miniMap.begin(); i != miniMap.end(); ++i) {
+                cout << "(" << i->second << " : " << i->first << ") ";
             }
             cout << "}" << endl;
         }

@@ -16,7 +16,7 @@ public:
     Edge() = default;
 
     Edge(E data) : data(data) {
-        
+
     }
 
     E getData() const { return this->data; }
