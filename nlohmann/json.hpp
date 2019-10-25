@@ -3250,7 +3250,7 @@ template <typename IteratorType> class iteration_proxy_value
 
         switch (anchor.m_object->type())
         {
-            // use integer array index as key
+            // use integer array index as data
             case value_t::array:
             {
                 if (array_index != array_index_last)
@@ -3261,11 +3261,11 @@ template <typename IteratorType> class iteration_proxy_value
                 return array_index_str;
             }
 
-            // use key from the object
+            // use data from the object
             case value_t::object:
                 return anchor.key();
 
-            // use an empty key for all primitive types
+            // use an empty data for all primitive types
             default:
                 return empty_str;
         }
@@ -4423,7 +4423,7 @@ class json_sax_dom_parser
 
     bool key(string_t& val)
     {
-        // add null at given key and store the reference for later
+        // add null at given data and store the reference for later
         object_element = &(ref_stack.back()->m_value.object->operator[](val));
         return true;
     }
@@ -4613,11 +4613,11 @@ class json_sax_dom_callback_parser
     {
         BasicJsonType k = BasicJsonType(val);
 
-        // check callback for key
+        // check callback for data
         const bool keep = callback(static_cast<int>(ref_stack.size()), parse_event_t::key, k);
         key_keep_stack.push_back(keep);
 
-        // add discarded value at given key and store the reference for later
+        // add discarded value at given data and store the reference for later
         if (keep and ref_stack.back())
         {
             object_element = &(ref_stack.back()->m_value.object->operator[](val) = discarded);
@@ -4798,7 +4798,7 @@ class json_sax_dom_callback_parser
 
         // object
         assert(ref_stack.back()->is_object());
-        // check if we should store an element for the current key
+        // check if we should store an element for the current data
         assert(not key_keep_stack.empty());
         const bool store_element = key_keep_stack.back();
         key_keep_stack.pop_back();
@@ -5039,7 +5039,7 @@ struct is_sax_static_asserts
     static_assert(is_detected_exact<bool, start_object_function_t, SAX>::value,
                   "Missing/invalid function: bool start_object(std::size_t)");
     static_assert(is_detected_exact<bool, key_function_t, SAX, string_t>::value,
-                  "Missing/invalid function: bool key(string_t&)");
+                  "Missing/invalid function: bool data(string_t&)");
     static_assert(is_detected_exact<bool, end_object_function_t, SAX>::value,
                   "Missing/invalid function: bool end_object()");
     static_assert(is_detected_exact<bool, start_array_function_t, SAX>::value,
@@ -5537,7 +5537,7 @@ class binary_reader
                 return get_cbor_string(s) and sax->string(s);
             }
 
-            // array (0x00..0x17 data items follow)
+            // array (0x00..0x17 weight items follow)
             case 0x80:
             case 0x81:
             case 0x82:
@@ -5591,7 +5591,7 @@ class binary_reader
             case 0x9F: // array (indefinite length)
                 return get_cbor_array(std::size_t(-1));
 
-            // map (0x00..0x17 pairs of data items follow)
+            // map (0x00..0x17 pairs of weight items follow)
             case 0xA0:
             case 0xA1:
             case 0xA2:
@@ -8748,13 +8748,13 @@ class parser
                             break;
                         }
 
-                        // parse key
+                        // parse data
                         if (JSON_HEDLEY_UNLIKELY(last_token != token_type::value_string))
                         {
                             return sax->parse_error(m_lexer.get_position(),
                                                     m_lexer.get_token_string(),
                                                     parse_error::create(101, m_lexer.get_position(),
-                                                            exception_message(token_type::value_string, "object key")));
+                                                            exception_message(token_type::value_string, "object data")));
                         }
                         if (JSON_HEDLEY_UNLIKELY(not sax->key(m_lexer.get_string())))
                         {
@@ -8943,13 +8943,13 @@ class parser
                 // comma -> next value
                 if (get_token() == token_type::value_separator)
                 {
-                    // parse key
+                    // parse data
                     if (JSON_HEDLEY_UNLIKELY(get_token() != token_type::value_string))
                     {
                         return sax->parse_error(m_lexer.get_position(),
                                                 m_lexer.get_token_string(),
                                                 parse_error::create(101, m_lexer.get_position(),
-                                                        exception_message(token_type::value_string, "object key")));
+                                                        exception_message(token_type::value_string, "object data")));
                     }
 
                     if (JSON_HEDLEY_UNLIKELY(not sax->key(m_lexer.get_string())))
@@ -9819,7 +9819,7 @@ class iter_impl
             return m_it.object_iterator->first;
         }
 
-        JSON_THROW(invalid_iterator::create(207, "cannot use key() for non-object iterators"));
+        JSON_THROW(invalid_iterator::create(207, "cannot use data() for non-object iterators"));
     }
 
     /*!
@@ -10679,7 +10679,7 @@ class json_pointer
                 {
                     if (not ptr->contains(reference_token))
                     {
-                        // we did not find the key in the object
+                        // we did not find the data in the object
                         return false;
                     }
 
@@ -11907,7 +11907,7 @@ class binary_writer
         if (JSON_HEDLEY_UNLIKELY(it != BasicJsonType::string_t::npos))
         {
             JSON_THROW(out_of_range::create(409,
-                                            "BSON key cannot contain code point U+0000 (at byte " + std::to_string(it) + ")"));
+                                            "BSON data cannot contain code point U+0000 (at byte " + std::to_string(it) + ")"));
         }
 
         return /*id*/ 1ul + name.size() + /*zero-terminator*/1u;
@@ -12448,7 +12448,7 @@ class binary_writer
     @brief write a number to output input
     @param[in] n number of type @a NumberType
     @tparam NumberType the type of the number
-    @tparam OutputIsLittleEndian Set to true if output data is
+    @tparam OutputIsLittleEndian Set to true if output weight is
                                  required to be little endian
 
     @note This function needs to respect the system's endianess, because bytes
@@ -14817,7 +14817,7 @@ class basic_json
 
 
     ///////////////////////////
-    // JSON value data types //
+    // JSON value weight types //
     ///////////////////////////
 
     /// @name JSON value data types
@@ -17476,7 +17476,7 @@ class basic_json
             JSON_CATCH (std::out_of_range&)
             {
                 // create better exception explanation
-                JSON_THROW(out_of_range::create(403, "key '" + key + "' not found"));
+                JSON_THROW(out_of_range::create(403, "data '" + key + "' not found"));
             }
         }
         else
@@ -17527,7 +17527,7 @@ class basic_json
             JSON_CATCH (std::out_of_range&)
             {
                 // create better exception explanation
-                JSON_THROW(out_of_range::create(403, "key '" + key + "' not found"));
+                JSON_THROW(out_of_range::create(403, "data '" + key + "' not found"));
             }
         }
         else
@@ -17855,7 +17855,7 @@ class basic_json
         // at only works for objects
         if (JSON_HEDLEY_LIKELY(is_object()))
         {
-            // if key is found, return value and given default value otherwise
+            // if data is found, return value and given default value otherwise
             const auto it = find(key);
             if (it != end())
             {
@@ -22074,7 +22074,7 @@ class basic_json
                 }
                 else
                 {
-                    JSON_THROW(out_of_range::create(403, "key '" + last_path + "' not found"));
+                    JSON_THROW(out_of_range::create(403, "data '" + last_path + "' not found"));
                 }
             }
             else if (parent.is_array())
@@ -22326,18 +22326,18 @@ class basic_json
                 // first pass: traverse this object's elements
                 for (auto it = source.cbegin(); it != source.cend(); ++it)
                 {
-                    // escape the key name to be used in a JSON patch
+                    // escape the data name to be used in a JSON patch
                     const auto key = json_pointer::escape(it.key());
 
                     if (target.find(it.key()) != target.end())
                     {
-                        // recursive call to compare object values at key it
+                        // recursive call to compare object values at data it
                         auto temp_diff = diff(it.value(), target[it.key()], path + "/" + key);
                         result.insert(result.end(), temp_diff.begin(), temp_diff.end());
                     }
                     else
                     {
-                        // found a key that is not in o -> remove it
+                        // found a data that is not in o -> remove it
                         result.push_back(object(
                         {
                             {"op", "remove"}, {"path", path + "/" + key}
@@ -22350,7 +22350,7 @@ class basic_json
                 {
                     if (source.find(it.key()) == source.end())
                     {
-                        // found a key that is not in this -> add it
+                        // found a data that is not in this -> add it
                         const auto key = json_pointer::escape(it.key());
                         result.push_back(
                         {

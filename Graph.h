@@ -21,12 +21,11 @@ public:
     typedef Edge<self> edge;
 
     typedef unordered_map<N, node *> NodeSeq;
-    typedef unordered_map<N, edge *> EdgeSeq;
+    typedef unordered_map<E, edge *> EdgeSeq;
     typedef typename NodeSeq::iterator NodeIte;
     typedef typename EdgeSeq::iterator EdgeIte;
 private:
     NodeSeq nodes;
-    EdgeSeq edges;
     NodeIte ni; //iterator for nodes (maybe for project 2)
     EdgeIte ei; //iterator for edges (maybe for project 2)
 
@@ -34,7 +33,7 @@ private:
 public:
     Graph() {}
 
-    node *addNode(N tag, double x, double y) {
+    node *addVertex(N tag, double x, double y) {
         auto newNode = new node(tag, x, y); //Node or vertex
 
         nodes.insert({tag, newNode});
@@ -49,12 +48,12 @@ public:
         node *nodeTo = nullptr;
         //Search nodes and create if don't exist
         if (nodeFromIte == nodes.end())
-            nodeFrom = addNode(from, 0, 0);
+            nodeFrom = addVertex(from, 0, 0);
         else
             nodeFrom = nodeFromIte->second;
 
         if (nodeToIte == nodes.end())
-            nodeTo = addNode(to, 0, 0);
+            nodeTo = addVertex(to, 0, 0);
         else
             nodeTo = nodeToIte->second;
 
@@ -65,7 +64,7 @@ public:
         newEdge->nodes[0] = nodeFrom;
         newEdge->nodes[1] = nodeTo;
 
-        edges.insert({from + to, newEdge});
+        /*edges.insert({from + to, newEdge});*/
 
         addtoIndexTable(from, to, weight);
 
@@ -141,7 +140,7 @@ public:
         unordered_map<N, bool> visited; //Nodes visited (BFS)
 
         for(auto node=nodes.begin() ; node != nodes.end() ; ++node )
-            visited.insert({ (*node).data , false});
+            visited.insert({ (*node).weight , false});
 
         cola.push(ini);
         visited[ ini ] = true;
@@ -182,17 +181,17 @@ public:
         bool result = false;
         auto edgeIte = findEdge(from, to);
 
-        if (edgeIte != edges.end()) {
-            result = true;
-            edges.erase(edgeIte);
-        }
+//        if (edgeIte != edges.end()) {
+//            result = true;
+//            edges.erase(edgeIte);
+//        }
 
         return result;
     }
 
     NodeIte findNode(N tag) { return nodes.find(tag); }
 
-    EdgeIte findEdge(N from, N to) { return edges.find(from + to); }
+    EdgeIte findEdge(N from, N to) { /*return edges.find(from + to);*/ }
 
     void deleteOutEdges(N tag) {
         auto iteAdj = indexTable.find(tag); //Iterator
@@ -245,58 +244,20 @@ public:
     /* PSEUDO CODE (CORMEN) : Q->min priority queue
      * PRIM(G, w, r)
      *  for each u e G.V
-     *      u.key = INFINITY
+     *      u.data = INFINITY
      *      u.pi = NULL
-     *  r.key = 0
+     *  r.data = 0
      *  Q = G.V
      *  while Q is not empty
      *      u = EXTRACT-MIN(Q)
      *      for each v e G.Adj[u]
-     *          if v e Q && w(u, v) < v.key
+     *          if v e Q && w(u, v) < v.data
      *              v.pi = u
-     *              v.key = w(u, v)
+     *              v.data = w(u, v)
      * */
 
     self prim(N startNode) {
-        unordered_map<N, N> parent;
-        unordered_map<N, bool> visitedNodes;
-        unordered_map<N, E> weightEdges;
 
-        priority_queue<pair<E, N>, vector<pair<E, N>>, greater<pair<E, N>>> minHeap;
-
-        self MST;
-
-        minHeap.push(make_pair(0, startNode));
-        parent[startNode] = startNode;
-        while (!minHeap.empty()) {
-            N curr = minHeap.top().second;
-            E weig = minHeap.top().first;
-            minHeap.pop();
-
-            if (visitedNodes[curr]) { continue; }
-            visitedNodes[curr] = true;
-
-            if (MST.nodes.find(curr) == MST.nodes.end()) {
-//                MST->addNode( , , );
-            }
-            if (parent[curr] != curr) {
-//                MST->addEdge( , , );
-            }
-            auto iteAdj = indexTable.find(startNode); //busco el nodo
-
-            /* Itero sobre el minimapita*/
-            for (auto it = (iteAdj->second).begin(); it != (iteAdj->second).end(); ++it) {
-                auto w = it->first;
-                auto nd = it->second;
-                if (visitedNodes[nd]) { continue; }
-                if (weightEdges.find(nd) == weightEdges.end() || weightEdges[nd] < w) {
-                    parent[nd] = curr;
-                    weightEdges[nd] = w;
-                    minHeap.push(make_pair(w, nd));
-                }
-            }
-        }
-        return MST;
     }
 
     self kruskal();
@@ -324,7 +285,7 @@ public:
 
     int getNumberOfNodes() const { return nodes.size(); }
 
-    int getNumberOfEdges() const { return edges.size(); }
+    int getNumberOfEdges() const { /*return edges.size();*/ }
 
     E getDistance(node *nodeFrom, node *nodeTo) {
         E distance = 0;
@@ -378,7 +339,7 @@ public:
 
     ~Graph() {
         this->nodes.clear();
-        this->edges.clear();
+/*        this->edges.clear();*/
     }
 };
 

@@ -10,22 +10,22 @@ private:
     typedef typename G::E E;
     typedef typename G::node node;
 public:
-    E data;
+    E weight;
     node *nodes[2]; // Another option: node* from; node* to;
 
     Edge() = default;
 
-    Edge(E data) : data(data) {
+    Edge(E data) : weight(data) {
 
     }
 
-    E getData() const { return this->data; }
+    E getData() const { return this->weight; }
 
     std::pair<node, node> getNodes() const { return {nodes[0], nodes[1]}; }
 
     bool operator<(const Edge &other) const {
-        if (this->data != other.data)
-            return this->data < other.data;
+        if (this->weight != other.weight)
+            return this->weight < other.weight;
 
         if (nodes[0] != other.from)
             return nodes[0] < other.from;

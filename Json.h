@@ -38,7 +38,7 @@ public:
             auto x = airport.at("Latitude").get<string>();
             auto y = airport.at("Longitude").get<string>();
 
-            newgraph->addNode(airport.at("Id"), stof( x ), stof( y ) );
+            newgraph->addVertex(airport.at("Id"), stof(x), stof(y));
         }
 
         //Add the edges
