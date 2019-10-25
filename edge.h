@@ -22,7 +22,7 @@ public:
         this->nodes[1] = to;
     }
 
-    Edge(E weight, node* from, node* to):weight(weight){
+    Edge(node* from, node* to, E weight):weight(weight){
         this->nodes[0] = from;
         this->nodes[1] = to;
     }

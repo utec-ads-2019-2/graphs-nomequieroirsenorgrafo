@@ -49,62 +49,46 @@ public:
         return newNode;
     }
 
-    bool addEdge(N from, N to)
-    {
-//        if (findEdge(from, to)) { return false; }
-        auto itNewNodeFrom = nodes.find(from);
-        auto itNewNodeTo = nodes.find(to);
-        auto thisNodFrom = (itNewNodeFrom->second);
-        auto thisNodTo = (itNewNodeTo->second);
+    bool addEdge(N from, N to, E weight){
+        if( (nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end()) ){ return false; }
 
-        auto newNodeFrom = new node{thisNodFrom->data, thisNodFrom->x, thisNodFrom->y};
-        auto newNodeTo = new node{thisNodTo->data, thisNodTo->x, thisNodTo->y};
-        auto weight = getDistance(newNodeFrom, newNodeTo);
+        addToIndexTable(from, to, weight);
+        node* nodeFrom = nodes[from];
+        node* nodeTo = nodes[to];
 
-        auto newEdgeFromTo = new edge(weight,newNodeFrom, newNodeTo);
-        auto newEdgeToFrom = new edge(weight, newNodeTo, newNodeFrom);
-
-        auto itNodesFrom = nodes.find(from);
-        auto itNodesTo = nodes.find(to);
-        /* For directed graph */
-        if (directed){
-            (itNodesFrom->second)->edges.emplace_back(newEdgeFromTo);
+        if(this->directed) {
+            auto newEdge = new edge(nodeFrom, nodeTo, weight);
+            nodeFrom->edges.emplace_back(newEdge);
             return true;
         }
 
-        (itNodesFrom->second)->edges.emplace_back(newEdgeFromTo);
-        (itNodesTo->second)->edges.emplace_back(newEdgeToFrom);
+        auto edgeFromTo = new edge(nodeFrom, nodeTo, weight);
+        nodeFrom->edges.emplace_back(edgeFromTo);
+        auto edgeToFrom = new edge(nodeTo, nodeFrom, weight);
+        nodeTo->edges.emplace_back(edgeToFrom);
 
-        addToIndexTable(newNodeFrom->data, newNodeTo->data, weight);
         return true;
     }
 
-    bool addEdge(N from, N to, E weight)
-    {
-//        if (findEdge(from, to)) { return false; }
-        auto itNewNodeFrom = nodes.find(from);
-        auto itNewNodeTo = nodes.find(to);
-        auto thisNodFrom = (itNewNodeFrom->second);
-        auto thisNodTo = (itNewNodeTo->second);
+    bool addEdge(N from, N to){
+        if( (nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end()) ){ return false; }
 
-        auto newNodeFrom = new node{thisNodFrom->data, thisNodFrom->x, thisNodFrom->y};
-        auto newNodeTo = new node{thisNodTo->data, thisNodTo->x, thisNodTo->y};
+        auto weight = getDistance(nodes[from], nodes[to]);
+        addToIndexTable(from, to, weight);
+        node* nodeFrom = nodes[from];
+        node* nodeTo = nodes[to];
 
-        auto newEdgeFromTo = new edge(weight,newNodeFrom, newNodeTo);
-        auto newEdgeToFrom = new edge(weight, newNodeTo, newNodeFrom);
-
-        auto itNodesFrom = nodes.find(from);
-        auto itNodesTo = nodes.find(to);
-        /* For directed graph */
-        if (directed){
-            (itNodesFrom->second)->edges.emplace_back(newEdgeFromTo);
+        if(this->directed) {
+            auto newEdge = new edge(nodeFrom, nodeTo, weight);
+            nodeFrom->edges.emplace_back(newEdge);
             return true;
         }
 
-        (itNodesFrom->second)->edges.emplace_back(newEdgeFromTo);
-        (itNodesTo->second)->edges.emplace_back(newEdgeToFrom);
+        auto edgeFromTo = new edge(nodeFrom, nodeTo, weight);
+        nodeFrom->edges.emplace_back(edgeFromTo);
+        auto edgeToFrom = new edge(nodeTo, nodeFrom, weight);
+        nodeTo->edges.emplace_back(edgeToFrom);
 
-        addToIndexTable(newNodeFrom->data, newNodeTo->data, weight);
         return true;
     }
 
@@ -264,7 +248,18 @@ public:
      *              v.data = w(u, v)
      * */
 
-    self prim(N startNode) {
+    self prim(N start)
+    {
+        self MST;
+
+        for (auto itNodes = nodes.begin();itNodes != nodes.end(); ++itNodes)
+        {
+            MST.addVertex(itNodes->first);
+        }
+
+
+
+        return MST;
 
     }
 
@@ -320,34 +315,24 @@ public:
 
     int getPosNode(N node);
 
-    void printGraph() {
-//        cout << "Imprimiendo nodos" << endl;
-//        for(auto i: nodeList){
-//            cout << i.getTag() << " ";
-//        }
-//        cout << endl;
-//        cout << "Imprimiendo aristas" << endl;
-//        for(auto i: edgeList){
-//            cout << i.getNodes().first <<" "<< i.getNodes().second<< " "  << i.getWeight() << endl;;
-//        }
-//        cout << endl;
-
+    void printGraph()
+    {
         multimap<E, N> miniMap;
         cout << "Imprimiendo la lista de adyacencia" << endl;
-        for (auto it = indexTable.begin(); it != indexTable.end(); it++) {
+        for (auto it = indexTable.begin(); it != indexTable.end(); it++)
+        {
             cout << it->first << " : { ";
             miniMap = it->second;
-            for (auto i = miniMap.begin(); i != miniMap.end(); ++i) {
+            for (auto i = miniMap.begin(); i != miniMap.end(); ++i)
+            {
                 cout << "(" << i->second << " : " << i->first << ") ";
             }
             cout << "}" << endl;
         }
-        unordered_map<N, E> miniMap2;
     }
 
     ~Graph() {
         this->nodes.clear();
-/*        this->edges.clear();*/
     }
 };
 

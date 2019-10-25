@@ -33,7 +33,7 @@ int main() {
     testBfs2.addEdge("9", "18");testBfs2.addEdge("18", "9");
     testBfs2.addEdge("26", "11");testBfs2.addEdge("11", "26");
     testBfs2.addEdge("9", "19");testBfs2.addEdge("19", "9");
-    testBfs2.addEdge("13", "19");testBfs2.addEdge("19", "13");
+    testBfs2.privateAddEdge("13", "19");testBfs2.addEdge("19", "13");
     testBfs2.addEdge("13", "5");testBfs2.addEdge("5", "13");
     testBfs2.addEdge("23", "24");testBfs2.addEdge("24", "23");
 
@@ -47,7 +47,7 @@ int main() {
     cormen.addVertex("d",0.7, 0.6);
 
     cormen.addEdge("a", "b");
-    cormen.addEdge("b", "c");
+    cormen.privateAddEdge("b", "c");
     cormen.addEdge("c", "d");
     cormen.addEdge("d", "a");
 
@@ -92,9 +92,11 @@ void graphCormen(graph cormen)
     cormen.addEdge("h", "i", 7); cormen.addEdge("i", "h", 7);
 
     cout << cormen.findEdge("g", "h") << endl;
-    cout << cormen.deleteEdge("g", "h") << endl;
-
+//    cout << cormen.deleteEdge("g", "h") << endl;
     cormen.printGraph(); cout << endl;
+
+    auto primCormen = cormen.prim("a");
+    primCormen.printGraph();
 }
 
 void graphTestBfs(graph testBfs)
