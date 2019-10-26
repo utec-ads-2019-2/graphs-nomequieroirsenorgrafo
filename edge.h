@@ -41,6 +41,5 @@ public:
         return nodes[0] == other.nodes[0] and nodes[1] == other.nodes[1];
     }
 
-    ~Edge() { delete [] nodes; }
 };
 #endif //GRAPHS_NOMEQUIEROIRSENORGRAFO_EDGE_H

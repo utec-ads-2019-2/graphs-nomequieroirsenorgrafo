@@ -41,6 +41,11 @@ public:
         return newNode;
     }
 
+    void addVertex(node* oldNode){
+        node* newNode = new node(oldNode);
+        nodes[oldNode->data] = newNode;
+    }
+
     node *addVertex(N tag)
     {
         auto newNode = new node(tag); //Node or vertex
@@ -52,15 +57,8 @@ public:
     bool addEdge(N from, N to, E weight){
         if( (nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end()) ){ return false; }
 
-        addToIndexTable(from, to, weight);
         node* nodeFrom = nodes[from];
         node* nodeTo = nodes[to];
-
-        if(this->directed) {
-            auto newEdge = new edge(nodeFrom, nodeTo, weight);
-            nodeFrom->edges.emplace_back(newEdge);
-            return true;
-        }
 
         auto edgeFromTo = new edge(nodeFrom, nodeTo, weight);
         nodeFrom->edges.emplace_back(edgeFromTo);
@@ -74,7 +72,7 @@ public:
         if( (nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end()) ){ return false; }
 
         auto weight = getDistance(nodes[from], nodes[to]);
-        addToIndexTable(from, to, weight);
+
         node* nodeFrom = nodes[from];
         node* nodeTo = nodes[to];
 
@@ -94,7 +92,7 @@ public:
 
     bool deleteNode(N tag) {
         bool result = false;
-        auto nodeIte = findNode(tag);
+        auto nodeIte = findVertex(tag);
 
         if (nodeIte != nodes.end()) {
             result = true;
@@ -108,6 +106,67 @@ public:
         return result;
     }
 
+
+    bool deleteEdge(N from, N to) {
+        /*FALTA COMPLETAR*/
+        auto deleteEdge = findEdge(from, to);
+        if (!deleteEdge) { return false; }
+
+//        nodes.at(deleteEdge);
+
+        return true;
+    }
+
+    NodeIte findVertex(N tag) { return nodes.find(tag); }
+
+    node* findNode(N tag) {
+        if (nodes.find(tag) != nodes.end()){
+            node* resultantNode = new node(tag);
+            return resultantNode;
+        }
+        return nullptr;
+    }
+
+    edge* findEdge(N from, N to)
+    {
+        auto nodeFrom = nodes[from];
+        if (!nodeFrom) return nullptr;
+
+        auto nodeTo = nodes[to];
+        if (!nodeTo) return nullptr;
+
+        for (auto && edg: nodeFrom->edges)
+            if (edg->nodes[1]->data == nodeTo->data)
+                return edg;
+
+        return nullptr;
+    }
+
+    void deleteOutEdges(N tag)
+    {
+        auto iteIndexTable = indexTable.find(tag); //Iterator
+
+        if (iteIndexTable != indexTable.end()) {
+            for (auto it = iteIndexTable->second.begin(); it != iteIndexTable->second.end(); ++it) {
+                deleteEdge(tag, it->second);
+            }
+            indexTable.erase(tag);
+        }
+    }
+
+    void deleteInNodes(N tag) {
+        /*for (auto it = indexTable.begin(); it != indexTable.end(); ++it) {
+            auto iteAdj2 = it->second.find(tag);
+
+            if (iteAdj2 == it->second.end())
+                continue;
+
+            auto nodeFrom = it->first;
+            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+                deleteEdge(nodeFrom, tag);
+        }*/
+    }
+
     unordered_map<N, N> bfs(N ini) { //Breath First Search
 
         unordered_map<N, char> color; //(W)hite, (G)ray or (B)lack
@@ -115,7 +174,7 @@ public:
         unordered_map<N, N> predecesor;
         queue<N> cola;
 
-        if (findNode(ini) == nodes.end()) {
+        if (findVertex(ini) == nodes.end()) {
             auto msg = "Node " + ini + " doesn't exist";
             throw runtime_error(msg);
         }
@@ -127,7 +186,7 @@ public:
                 distance.insert( {name, 0} );
                 predecesor.insert( {name, ""});
             }
-         }
+        }
 
         color[ini] = 'G';
         distance[ini] = 0;
@@ -156,74 +215,6 @@ public:
         return predecesor;
     }
 
-
-    bool addToIndexTable(N fromNode, N toNode, E weight) {
-        multimap<E, N> auxEdges;
-
-        auto iteAdj = indexTable.find(fromNode); //Iterator
-
-        if (iteAdj == indexTable.end()) {
-            auxEdges.insert({{weight, toNode}});
-            indexTable.insert({fromNode, auxEdges});
-        } else {
-            iteAdj->second.insert({weight, toNode});
-        }
-
-        return true;
-    }
-
-    bool deleteEdge(N from, N to) {
-        /*FALTA COMPLETAR*/
-        auto deleteEdge = findEdge(from, to);
-        if (!deleteEdge) { return false; }
-
-//        nodes.at(deleteEdge);
-
-        return true;
-    }
-
-    NodeIte findNode(N tag) { return nodes.find(tag); }
-
-    bool findEdge(N from, N to)
-    {
-        auto nodeFrom = nodes[from];
-        if (!nodeFrom) return false;
-
-        auto nodeTo = nodes[to];
-        if (!nodeTo) return false;
-
-        for (auto && edg: nodeFrom->edges)
-            if (edg->nodes[1]->data == nodeTo->data)
-                return true;
-
-        return false;
-    }
-
-    void deleteOutEdges(N tag)
-    {
-        auto iteIndexTable = indexTable.find(tag); //Iterator
-
-        if (iteIndexTable != indexTable.end()) {
-            for (auto it = iteIndexTable->second.begin(); it != iteIndexTable->second.end(); ++it) {
-                deleteEdge(tag, it->second);
-            }
-            indexTable.erase(tag);
-        }
-    }
-
-    void deleteInNodes(N tag) {
-        /*for (auto it = indexTable.begin(); it != indexTable.end(); ++it) {
-            auto iteAdj2 = it->second.find(tag);
-
-            if (iteAdj2 == it->second.end())
-                continue;
-
-            auto nodeFrom = it->first;
-            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-                deleteEdge(nodeFrom, tag);
-        }*/
-    }
-
     /* STEPS (ERNESTO BOOK):
      * 1. Se crea un grafo M con los mismos vértices del grafo original G y sin arcos.
      * 2. En G se selecciona un vértice de partida Vo que se marca como visitado.
@@ -231,7 +222,8 @@ public:
      * 4. Se desencola de C el arco menor en peso y se copia en M.
      * 5. El vértice destino del arco de menor peso Vd se marca como visitado en G
      * 6. Vo es ahora igual a Vd.
-     * 7. Se repiten los pasos del 3 al 6 hasta que el número de vértices marcados como visitados*/
+     * 7. Se repiten los pasos del 3 al 6 hasta que el número de vértices marcados como visitados sea igual al número
+     * de vértices en M.*/
 
     /* PSEUDO CODE (CORMEN) : Q->min priority queue
      * PRIM(G, w, r)
@@ -248,19 +240,48 @@ public:
      *              v.data = w(u, v)
      * */
 
-    self prim(N start)
+    self* prim(N start)
     {
-        self MST;
-
+       // if ( nodes.find(start) == nodes.end()) { throw runtime_error("Selected vertex is not part of the graph"); }
+       // algoritmo sacado del libro de ernesto (pero no funciona bien)
+//         1. Se crea un grafo M con los mismos vértices del grafo original G y sin arcos. CORRECTO!
+        self* MST = new self;
         for (auto itNodes = nodes.begin();itNodes != nodes.end(); ++itNodes)
+            MST->addVertex(itNodes->first);
+
+//         2. En G se selecciona un vértice de partida Vo que se marca como visitado.
+        set<N> verticesMarkedAsVisited;
+        priority_queue< pair<E, N>,vector<pair<E, N>>, greater<pair<E, N>> > edgesNotVisitedYet;  // C
+
+        node* startNode = new node(start);
+        verticesMarkedAsVisited.insert(start);
+        node* currNode = nodes[start];
+
+//7. Se repiten los pasos del 3 al 6 hasta que el número de vértices marcados como visitados sea igual al número de vértices en M.
+        while (MST->getNumberOfNodes() != verticesMarkedAsVisited.size())
         {
-            MST.addVertex(itNodes->first);
+//             3. Los arcos de Vo, cuyos vértices destino no han sido visitados, se encolan en C.
+            for (auto && edg: currNode->edges)
+            {
+                N dat = edg->nodes[1]->data; // vertice de destino
+                if (verticesMarkedAsVisited.find(dat) == verticesMarkedAsVisited.end())
+                    edgesNotVisitedYet.push(make_pair(edg->weight, dat));
+            }
+//             4. Se desencola de C el arco menor en peso y se copia en M.
+            auto curr = edgesNotVisitedYet.top().second;
+            auto pes = edgesNotVisitedYet.top().first;
+            MST->addEdge(currNode->data, curr, pes);
+            edgesNotVisitedYet.pop();
+
+//             5. El vértice destino del arco de menor peso Vd se marca como visitado en G
+            verticesMarkedAsVisited.insert(curr);
+
+//             6. Vo es ahora igual a Vd.
+            auto vd = nodes[curr];
+            currNode = vd;
         }
 
-
-
         return MST;
-
     }
 
     self kruskal();
@@ -288,7 +309,16 @@ public:
 
     int getNumberOfNodes() const { return nodes.size(); }
 
-    int getNumberOfEdges() const { /*return edges.size();*/ }
+    int getNumberOfEdges() const {
+        int result = 0;
+        for (auto itNods = nodes.begin(); itNods != nodes.end() ; ++itNods) {
+            node* nod = itNods->second;
+            auto sizeOfEdgesForEachNode = nod->sizeEdges();
+            result += sizeOfEdgesForEachNode;
+        }
+        result = result / 2;
+        return result;
+    }
 
     E getDistance(node *nodeFrom, node *nodeTo) {
         E distance = 0;
@@ -310,25 +340,22 @@ public:
     }
 
     int getOutDegree(N data);
-
     int getInDegree(N data);
-
     int getPosNode(N node);
 
     void printGraph()
     {
-        multimap<E, N> miniMap;
-        cout << "Imprimiendo la lista de adyacencia" << endl;
-        for (auto it = indexTable.begin(); it != indexTable.end(); it++)
+        cout << "Imprimiendo GRAFOOOO" << endl;
+        for (auto it = nodes.begin(); it != nodes.end(); it++)
         {
             cout << it->first << " : { ";
-            miniMap = it->second;
-            for (auto i = miniMap.begin(); i != miniMap.end(); ++i)
+            auto miniMap = it->second;
+            for (auto i: miniMap->edges)
             {
-                cout << "(" << i->second << " : " << i->first << ") ";
+                cout << "(" << (i->nodes[0])->data << " : " << (i->nodes[1])->data << " Peso: " << i->weight << ") ";
             }
             cout << "}" << endl;
-        }
+        } cout << endl;
     }
 
     ~Graph() {
