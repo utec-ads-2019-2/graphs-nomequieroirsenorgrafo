@@ -4,7 +4,7 @@
 
 #include "node.h"
 #include "edge.h"
-#include <unordered_map>
+
 struct Traits {
     typedef string N;
     typedef float E;
@@ -23,60 +23,63 @@ public:
     typedef unordered_map<N, node *> NodeSeq;
     typedef vector<edge *> EdgeSeq;
     typedef typename NodeSeq::iterator NodeIte;
-    typedef typename EdgeSeq::iterator EdgeIte;
+//    typedef typename EdgeSeq::iterator EdgeIte;
 private:
     NodeSeq nodes;
-    NodeIte ni; //iterator for nodes (maybe for project 2)
-    EdgeIte ei; //iterator for edges (maybe for project 2)
-    bool directed = false;
-    unordered_map<N, multimap<E, N> > indexTable;
+    bool directed;
 public:
-    Graph() {}
+    Graph() {
+        this->directed = false;
+    }
 
-    node *addVertex(N tag, double x, double y)
-    {
+    Graph(bool directed):directed(directed) { }
+
+    node *addVertex(N tag, double x, double y) {
         auto newNode = new node(tag, x, y); //Node or vertex
         nodes.insert({tag, newNode});
 
         return newNode;
     }
 
-    void addVertex(node* oldNode){
-        node* newNode = new node(oldNode);
+    void addVertex(node *oldNode) {
+        node *newNode = new node(oldNode);
         nodes[oldNode->data] = newNode;
     }
 
-    node *addVertex(N tag)
-    {
+    node *addVertex(N tag) {
         auto newNode = new node(tag); //Node or vertex
         nodes.insert({tag, newNode});
 
         return newNode;
     }
 
-    bool addEdge(N from, N to, E weight){
-        if( (nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end()) ){ return false; }
+    bool addEdge(N from, N to, E weight) {
+        if ((nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end())) { return false; }
 
-        node* nodeFrom = nodes[from];
-        node* nodeTo = nodes[to];
+        node *nodeFrom = nodes[from];
+        node *nodeTo = nodes[to];
 
-        auto edgeFromTo = new edge(nodeFrom, nodeTo, weight);
-        nodeFrom->edges.emplace_back(edgeFromTo);
+        if (this->directed) {
+            auto edgeFromTo = new edge(nodeFrom, nodeTo, weight);
+            nodeFrom->edges.emplace_back(edgeFromTo);
+            return true;
+        }
+
         auto edgeToFrom = new edge(nodeTo, nodeFrom, weight);
         nodeTo->edges.emplace_back(edgeToFrom);
 
         return true;
     }
 
-    bool addEdge(N from, N to){
-        if( (nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end()) ){ return false; }
+    bool addEdge(N from, N to) {
+        if ((nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end())) { return false; }
 
         auto weight = getDistance(nodes[from], nodes[to]);
 
-        node* nodeFrom = nodes[from];
-        node* nodeTo = nodes[to];
+        node *nodeFrom = nodes[from];
+        node *nodeTo = nodes[to];
 
-        if(this->directed) {
+        if (this->directed) {
             auto newEdge = new edge(nodeFrom, nodeTo, weight);
             nodeFrom->edges.emplace_back(newEdge);
             return true;
@@ -92,20 +95,25 @@ public:
 
     bool deleteNode(N tag) {
         bool result = false;
+        EdgeSeq edges;
         auto nodeIte = findVertex(tag);
 
         if (nodeIte != nodes.end()) {
             result = true;
             nodes.erase(nodeIte);
         }
-
-        // Deletes edges with Node as origin and destination
-        deleteOutEdges(tag);
-        deleteInNodes(tag);
+        // Deletes edges with Node(tag) as destination
+        for (auto nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt) {
+            edges = *nodeIt->edges;
+            for (auto edgeIt = edges.begin(); edgeIt != edges.end(); ++edgeIt) {
+                auto nodeTo = *edgeIt.node[1];
+                if (nodeTo == tag)
+                    edges.erase(edgeIt);
+            }
+        }
 
         return result;
     }
-
 
     bool deleteEdge(N from, N to) {
         /*FALTA COMPLETAR*/
@@ -119,52 +127,26 @@ public:
 
     NodeIte findVertex(N tag) { return nodes.find(tag); }
 
-    node* findNode(N tag) {
-        if (nodes.find(tag) != nodes.end()){
-            node* resultantNode = new node(tag);
+    node *findNode(N tag) {
+        if (nodes.find(tag) != nodes.end()) {
+            node *resultantNode = new node(tag);
             return resultantNode;
         }
         return nullptr;
     }
 
-    edge* findEdge(N from, N to)
-    {
+    edge *findEdge(N from, N to) {
         auto nodeFrom = nodes[from];
         if (!nodeFrom) return nullptr;
 
         auto nodeTo = nodes[to];
         if (!nodeTo) return nullptr;
 
-        for (auto && edg: nodeFrom->edges)
+        for (auto &&edg: nodeFrom->edges)
             if (edg->nodes[1]->data == nodeTo->data)
                 return edg;
 
         return nullptr;
-    }
-
-    void deleteOutEdges(N tag)
-    {
-        auto iteIndexTable = indexTable.find(tag); //Iterator
-
-        if (iteIndexTable != indexTable.end()) {
-            for (auto it = iteIndexTable->second.begin(); it != iteIndexTable->second.end(); ++it) {
-                deleteEdge(tag, it->second);
-            }
-            indexTable.erase(tag);
-        }
-    }
-
-    void deleteInNodes(N tag) {
-        /*for (auto it = indexTable.begin(); it != indexTable.end(); ++it) {
-            auto iteAdj2 = it->second.find(tag);
-
-            if (iteAdj2 == it->second.end())
-                continue;
-
-            auto nodeFrom = it->first;
-            for (auto it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-                deleteEdge(nodeFrom, tag);
-        }*/
     }
 
     unordered_map<N, N> bfs(N ini) { //Breath First Search
@@ -182,9 +164,9 @@ public:
         for (auto node = nodes.begin(); node != nodes.end(); ++node) {
             auto name = node->first;
             if (name != ini) {
-                color.insert( {name, 'W'} );
-                distance.insert( {name, 0} );
-                predecesor.insert( {name, ""});
+                color.insert({name, 'W'});
+                distance.insert({name, 0});
+                predecesor.insert({name, ""});
             }
         }
 
@@ -197,10 +179,10 @@ public:
             auto nodeAux = cola.front();
             cola.pop();
 
-            auto neighbours = indexTable[nodeAux];
+            auto neighbours = nodes[nodeAux]->edges;
 
             for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
-                auto name = it->second;
+                auto name = (*it)->nodes[1]->data;
                 if (color[name] == 'W') { //white
                     color[name] = 'G'; //Gray
 
@@ -215,62 +197,38 @@ public:
         return predecesor;
     }
 
-    /* STEPS (ERNESTO BOOK):
-     * 1. Se crea un grafo M con los mismos vértices del grafo original G y sin arcos.
-     * 2. En G se selecciona un vértice de partida Vo que se marca como visitado.
-     * 3. Los arcos de Vo, cuyos vértices destino no han sido visitados, se encolan en C.
-     * 4. Se desencola de C el arco menor en peso y se copia en M.
-     * 5. El vértice destino del arco de menor peso Vd se marca como visitado en G
-     * 6. Vo es ahora igual a Vd.
-     * 7. Se repiten los pasos del 3 al 6 hasta que el número de vértices marcados como visitados sea igual al número
-     * de vértices en M.*/
-
-    /* PSEUDO CODE (CORMEN) : Q->min priority queue
-     * PRIM(G, w, r)
-     *  for each u e G.V
-     *      u.data = INFINITY
-     *      u.pi = NULL
-     *  r.data = 0
-     *  Q = G.V
-     *  while Q is not empty
-     *      u = EXTRACT-MIN(Q)
-     *      for each v e G.Adj[u]
-     *          if v e Q && w(u, v) < v.data
-     *              v.pi = u
-     *              v.data = w(u, v)
-     * */
-
-    self* prim(N start)
-    {
-       // if ( nodes.find(start) == nodes.end()) { throw runtime_error("Selected vertex is not part of the graph"); }
-       self* mst = new self;
-        unordered_map<N, N> origin; unordered_map<N, bool> visited; unordered_map<N, E> weight;
+    self *prim(N start) {
+        if ( nodes.find(start) == nodes.end()) {
+            throw runtime_error("Selected vertex is not part of the graph");
+        }
+        self *mst = new self;
+        unordered_map<N, N> origin;
+        unordered_map<N, bool> visited;
+        unordered_map<N, E> weight;
         priority_queue<pair<E, N>, vector<pair<E, N>>, greater<>> Q;
 
         Q.push(make_pair(0, start));
         origin[start] = start;
 
-        while(!Q.empty())
-        {
+        while (!Q.empty()) {
             N dest = Q.top().second;
             E minWeight = Q.top().first;
             Q.pop();
 
-            if(visited[dest]) { continue; }
+            if (visited[dest]) { continue; }
             visited[dest] = true;
 
-            if(mst->nodes.find(dest) == mst->nodes.end())
+            if (mst->nodes.find(dest) == mst->nodes.end())
                 mst->addVertex(nodes[dest]);
 
-            if(origin[dest] != dest)
+            if (origin[dest] != dest)
                 mst->addEdge(origin[dest], dest, minWeight);
 
-            for(auto edg : nodes[dest]->edges)
-            {
+            for (auto edg : nodes[dest]->edges) {
                 auto adjNode = edg->nodes[1]->data;
                 auto adjWeight = edg->weight;
-                if(visited[adjNode]) { continue; }
-                if(weight.find(adjNode) == weight.end() || adjWeight < weight[adjNode]){
+                if (visited[adjNode]) { continue; }
+                if (weight.find(adjNode) == weight.end() || adjWeight < weight[adjNode]) {
                     origin[adjNode] = dest;
                     weight[adjNode] = adjWeight;
                     Q.push(make_pair(adjWeight, adjNode));
@@ -280,7 +238,87 @@ public:
         return mst;
     }
 
-    self kruskal();
+    self *kruskal() {
+        self *mst = new self;
+        multimap<E, pair<N, N> > sorted;
+
+        //Get the edged sort ascendent
+        for (auto nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt) {
+            auto edges = (*nodeIt).second->edges;
+
+            for (auto edgeIt = edges.begin(); edgeIt != edges.end(); ++edgeIt) {
+                auto edge = *edgeIt;
+                sorted.insert({edge->weight, make_pair(edge->nodes[0]->data, edge->nodes[1]->data)});
+            }
+        }
+
+        return mst;
+    }
+
+    bool isBipartite() {
+        set<N> red_colored;
+        set<N> blue_colored;
+        int i;
+        bool isbipartite = true;
+        queue<N> cola;
+        N ini;
+
+        auto nodeIt = nodes.begin();
+        if (nodeIt == nodes.end()) {
+            auto msg = "Node " + ini + " doesn't exist";
+        } else
+            ini = nodeIt->first;
+
+        i = 0;
+        cola.push(ini);
+
+        while (!cola.empty()) {
+            auto nodeAux = cola.front();
+            cola.pop();
+
+            isbipartite = assignColor(nodeAux, i, isbipartite, &red_colored, &blue_colored);
+            if(!isbipartite)
+                break;
+            ++i;
+
+            auto neighbours = nodes[nodeAux]->edges;
+
+            for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
+                auto name = (*it)->nodes[1]->data;
+
+                isbipartite = assignColor(name, i, isbipartite, &red_colored, &blue_colored);
+                if(!isbipartite)
+                    break;
+
+                cola.push(name);
+            }
+            ++i;
+            if (!isbipartite)
+                break;
+        }
+
+        return isbipartite;
+    }
+
+    bool assignColor(N tag, int i, bool isbipartite, set<N> *red, set<N> *blue) {
+        bool status = isbipartite;
+
+        if (i % 2 == 0) {
+            auto result = blue->find(tag);
+            if (result != blue->end())
+                status = false;
+            else
+                red->insert(tag);
+        } else {
+            auto result = red->find(tag);
+            if (result != red->end())
+                status = false;
+            else
+                blue->insert(tag);
+        }
+
+        return status;
+    }
 
     std::pair<bool, map<N, bool>> getBipartiteAndColors() {
 
@@ -290,14 +328,14 @@ public:
 
     //bool isConnected() { return getStronglyConnectedComponents().first == 1; }
     bool isConnected() {
-        bool result=false;
+        bool result = false;
         auto firstNode = nodes.begin();
 
-        auto bfsResult = bfs( firstNode->first );
+        auto bfsResult = bfs(firstNode->first);
 
-        for(auto it = bfsResult.begin() ; it != bfsResult.end() ; ++it ) {
-            auto resultFind = nodes.find( it->second );
-            if ( resultFind != nodes.end() )
+        for (auto it = bfsResult.begin(); it != bfsResult.end(); ++it) {
+            auto resultFind = nodes.find(it->second);
+            if (resultFind != nodes.end())
                 result = true;
         }
         return result;
@@ -307,8 +345,8 @@ public:
 
     int getNumberOfEdges() const {
         int result = 0;
-        for (auto itNods = nodes.begin(); itNods != nodes.end() ; ++itNods) {
-            node* nod = itNods->second;
+        for (auto itNods = nodes.begin(); itNods != nodes.end(); ++itNods) {
+            node *nod = itNods->second;
             auto sizeOfEdgesForEachNode = nod->sizeEdges();
             result += sizeOfEdgesForEachNode;
         }
@@ -332,26 +370,25 @@ public:
         double V = getNumberOfNodes();
         double E = getNumberOfEdges();
 
-        return E / (V * (V - 1));
+        auto density = E / (V * (V - 1));
+
+        if (this->directed)
+            return density;
+        else
+            return 2 * density;
     }
 
-    int getOutDegree(N data);
-    int getInDegree(N data);
-    int getPosNode(N node);
-
-    void printGraph()
-    {
+    void printGraph() {
         cout << "Imprimiendo GRAFOOOO" << endl;
-        for (auto it = nodes.begin(); it != nodes.end(); it++)
-        {
+        for (auto it = nodes.begin(); it != nodes.end(); it++) {
             cout << it->first << " : { ";
             auto miniMap = it->second;
-            for (auto i: miniMap->edges)
-            {
+            for (auto i: miniMap->edges) {
                 cout << "(" << (i->nodes[0])->data << " : " << (i->nodes[1])->data << " Peso: " << i->weight << ") ";
             }
             cout << "}" << endl;
-        } cout << endl;
+        }
+        cout << endl;
     }
 
     ~Graph() {

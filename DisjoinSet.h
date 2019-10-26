@@ -8,11 +8,10 @@ using namespace std;
 template <typename T>
 class DisjointSet {
     unordered_map<T, T> parent;
-    unordered_map<T, T> ds;
 public:
     DisjointSet() = default;
 
-    T& operator[](T i){ return ds[i]; }
+    T& operator[](T i){ return parent[i]; }
 
     void makeSet(std::vector<T> const &universe){
         for (int i : universe)

@@ -5,12 +5,14 @@ using namespace std;
 
 void graphCormen(graph);
 void graphTestBfs(graph);
+void testBipartite();
 
 int main() {
     /*Cormen graph*/
     graph cormen;
     graphCormen(cormen);
 
+    testBipartite();
     /*TestBfs graph*/
     /*graph testBfs;
     graphTestBfs(testBfs);
@@ -95,8 +97,10 @@ void graphCormen(graph cormen)
 //    cout <<  edge->nodes[0]<< " " << edge->nodes[1] << " " << edge->weight << endl;
 //    cout << cormen.deleteEdge("g", "h") << endl;
     cormen.printGraph(); cout << endl;
-
+    //auto bipartite = ( cormen.isBipartite() == true )?"Yes":"No";
+    //cout<< "is bipartite? " << bipartite << endl;
     auto primCormen = cormen.prim("a");
+    //auto kruskalCormen = cormen.kruskal();
     primCormen->printGraph();
 }
 
@@ -125,7 +129,47 @@ void graphTestBfs(graph testBfs)
     testBfs.printGraph();
 
     testBfs.bfs("s");
-    auto connected = ( testBfs.isConnected() == true )?"Si":"No";
+    auto connected = ( testBfs.isConnected() == true )?"Yes":"No";
     cout<< "Is connected -> "<<connected<< endl;
 
+}
+
+void testBipartite() {
+    auto test1 = new graph();
+    cout << "Test bipartite" << endl;
+    test1->addVertex("a");
+    test1->addVertex("b");
+    test1->addVertex("c");
+    test1->addVertex("d");
+    test1->addVertex("e");
+    test1->addVertex("f");
+
+    test1->addEdge("a", "b", 1);
+    test1->addEdge("b", "c", 1);
+    test1->addEdge("c", "d", 1);
+    test1->addEdge("d", "e", 1);
+    test1->addEdge("e", "f", 1);
+    test1->addEdge("f", "a", 1);
+
+    test1->printGraph();
+    auto bipartite = ( test1->isBipartite() == true )?"Yes":"No";
+    cout<< "is bipartite? " << bipartite << endl;
+    cout << endl;
+
+    auto test2 = new graph();
+    test2->addVertex("a");
+    test2->addVertex("b");
+    test2->addVertex("c");
+    test2->addVertex("d");
+    test2->addVertex("e");
+
+    test2->addEdge("a", "b", 1);
+    test2->addEdge("b", "c", 1);
+    test2->addEdge("c", "d", 1);
+    test2->addEdge("d", "e", 1);
+    test2->addEdge("e", "a", 1);
+    test2->printGraph();
+    bipartite = ( test2->isBipartite() == true )?"Yes":"No";
+    cout<< "is bipartite? " << bipartite << endl;
+    cout << endl;
 }

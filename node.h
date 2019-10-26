@@ -5,6 +5,7 @@
 #include <cmath>
 #include <set>
 #include <map>
+#include <unordered_map>
 
 using namespace std;
 
@@ -26,11 +27,14 @@ public:
         this->x = node->x;
         this->y = node->y;
     }
-    int sizeEdges(){ edges.size(); }
+    int sizeEdges(){ return edges.size(); }
     bool operator<(const Node &other) const { return this->data < other.data; }
 
     bool operator==(const Node &other) const { return this->data == other.data; }
 
+    ~Node() {
+        this->edges.clear();
+    }
 };
 
 #endif //GRAPHS_NOMEQUIEROIRSENORGRAFO_NODE_H
