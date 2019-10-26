@@ -66,31 +66,30 @@ int main() {
 void graphCormen(graph cormen)
 {
     cormen.addVertex("a"); cormen.addVertex("b"); cormen.addVertex("c");
-    cormen.addVertex("d"); /*cormen.addVertex("e"); cormen.addVertex("f");
-    cormen.addVertex("g"); cormen.addVertex("h"); cormen.addVertex("i");*/
+    cormen.addVertex("d"); cormen.addVertex("e"); cormen.addVertex("f");
+    cormen.addVertex("g"); cormen.addVertex("h"); cormen.addVertex("i");
 
     cormen.addEdge("a", "b", 4);
-//    cormen.addEdge("a", "h", 8);
+    cormen.addEdge("a", "h", 8);
 
     cormen.addEdge("b", "c", 8);
-//    cormen.addEdge("b", "h", 11);
+    cormen.addEdge("b", "h", 11);
 
     cormen.addEdge("c", "d", 7);
-    cormen.addEdge("a", "d", 6);
-//    cormen.addEdge("c", "i", 2);
-//    cormen.addEdge("c", "f", 4);
+    cormen.addEdge("c", "i", 2);
+    cormen.addEdge("c", "f", 4);
 
-//    cormen.addEdge("d", "e", 9);
-//    cormen.addEdge("d", "f", 14);
-//
-//    cormen.addEdge("e", "f", 10);
-//
-//    cormen.addEdge("f", "g", 2);
-//
-//    cormen.addEdge("g", "h", 1);
-//    cormen.addEdge("g", "i", 6);
-//
-//    cormen.addEdge("h", "i", 7);
+    cormen.addEdge("d", "e", 9);
+    cormen.addEdge("d", "f", 14);
+
+    cormen.addEdge("e", "f", 10);
+
+    cormen.addEdge("f", "g", 2);
+
+    cormen.addEdge("g", "h", 1);
+    cormen.addEdge("g", "i", 6);
+
+    cormen.addEdge("h", "i", 7);
     cout << cormen.getNumberOfNodes() << " " << cormen.getNumberOfEdges() << endl;
 //    auto edge = cormen.findEdge("g", "h");
 //    cout <<  edge->nodes[0]<< " " << edge->nodes[1] << " " << edge->weight << endl;

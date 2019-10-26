@@ -243,45 +243,41 @@ public:
     self* prim(N start)
     {
        // if ( nodes.find(start) == nodes.end()) { throw runtime_error("Selected vertex is not part of the graph"); }
-       // algoritmo sacado del libro de ernesto (pero no funciona bien)
-//         1. Se crea un grafo M con los mismos vértices del grafo original G y sin arcos. CORRECTO!
-        self* MST = new self;
-        for (auto itNodes = nodes.begin();itNodes != nodes.end(); ++itNodes)
-            MST->addVertex(itNodes->first);
+       self* mst = new self;
+        unordered_map<N, N> origin; unordered_map<N, bool> visited; unordered_map<N, E> weight;
+        priority_queue<pair<E, N>, vector<pair<E, N>>, greater<>> Q;
 
-//         2. En G se selecciona un vértice de partida Vo que se marca como visitado.
-        set<N> verticesMarkedAsVisited;
-        priority_queue< pair<E, N>,vector<pair<E, N>>, greater<pair<E, N>> > edgesNotVisitedYet;  // C
+        Q.push(make_pair(0, start));
+        origin[start] = start;
 
-        node* startNode = new node(start);
-        verticesMarkedAsVisited.insert(start);
-        node* currNode = nodes[start];
-
-//7. Se repiten los pasos del 3 al 6 hasta que el número de vértices marcados como visitados sea igual al número de vértices en M.
-        while (MST->getNumberOfNodes() != verticesMarkedAsVisited.size())
+        while(!Q.empty())
         {
-//             3. Los arcos de Vo, cuyos vértices destino no han sido visitados, se encolan en C.
-            for (auto && edg: currNode->edges)
+            N dest = Q.top().second;
+            E minWeight = Q.top().first;
+            Q.pop();
+
+            if(visited[dest]) { continue; }
+            visited[dest] = true;
+
+            if(mst->nodes.find(dest) == mst->nodes.end())
+                mst->addVertex(nodes[dest]);
+
+            if(origin[dest] != dest)
+                mst->addEdge(origin[dest], dest, minWeight);
+
+            for(auto edg : nodes[dest]->edges)
             {
-                N dat = edg->nodes[1]->data; // vertice de destino
-                if (verticesMarkedAsVisited.find(dat) == verticesMarkedAsVisited.end())
-                    edgesNotVisitedYet.push(make_pair(edg->weight, dat));
+                auto adjNode = edg->nodes[1]->data;
+                auto adjWeight = edg->weight;
+                if(visited[adjNode]) { continue; }
+                if(weight.find(adjNode) == weight.end() || adjWeight < weight[adjNode]){
+                    origin[adjNode] = dest;
+                    weight[adjNode] = adjWeight;
+                    Q.push(make_pair(adjWeight, adjNode));
+                }
             }
-//             4. Se desencola de C el arco menor en peso y se copia en M.
-            auto curr = edgesNotVisitedYet.top().second;
-            auto pes = edgesNotVisitedYet.top().first;
-            MST->addEdge(currNode->data, curr, pes);
-            edgesNotVisitedYet.pop();
-
-//             5. El vértice destino del arco de menor peso Vd se marca como visitado en G
-            verticesMarkedAsVisited.insert(curr);
-
-//             6. Vo es ahora igual a Vd.
-            auto vd = nodes[curr];
-            currNode = vd;
         }
-
-        return MST;
+        return mst;
     }
 
     self kruskal();
