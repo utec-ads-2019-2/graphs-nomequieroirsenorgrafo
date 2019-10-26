@@ -4,7 +4,7 @@
 
 #include "node.h"
 #include "edge.h"
-
+#include "DisjoinSet.h"
 struct Traits {
     typedef string N;
     typedef float E;
@@ -28,11 +28,8 @@ private:
     NodeSeq nodes;
     bool directed;
 public:
-    Graph() {
-        this->directed = false;
-    }
-
-    Graph(bool directed):directed(directed) { }
+    Graph(): directed(false) {}
+    Graph(bool directed):directed(directed) {}
 
     node *addVertex(N tag, double x, double y) {
         auto newNode = new node(tag, x, y); //Node or vertex
@@ -65,6 +62,8 @@ public:
             return true;
         }
 
+        auto edgeFromTo = new edge(nodeFrom, nodeTo, weight);
+        nodeFrom->edges.emplace_back(edgeFromTo);
         auto edgeToFrom = new edge(nodeTo, nodeFrom, weight);
         nodeTo->edges.emplace_back(edgeToFrom);
 
@@ -238,17 +237,36 @@ public:
         return mst;
     }
 
-    self *kruskal() {
+    self *kruskal()
+    {
+        DisjointSet<N> disjointSet;
         self *mst = new self;
         multimap<E, pair<N, N> > sorted;
+
+        for (auto iterNod = nodes.begin(); iterNod != nodes.end(); ++iterNod)
+        {
+            mst->addVertex(iterNod->first);
+        }
 
         //Get the edged sort ascendent
         for (auto nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt) {
             auto edges = (*nodeIt).second->edges;
-
+            auto v = nodeIt->first;
+            disjointSet.makeSet(v);
             for (auto edgeIt = edges.begin(); edgeIt != edges.end(); ++edgeIt) {
                 auto edge = *edgeIt;
                 sorted.insert({edge->weight, make_pair(edge->nodes[0]->data, edge->nodes[1]->data)});
+            }
+        }
+
+        for (auto itSorted = sorted.begin(); itSorted != sorted.end(); ++itSorted)
+        {
+            auto w = itSorted->first;
+            auto pairNN = itSorted->second;
+            auto u = pairNN.first; auto v = pairNN.second;
+            if (disjointSet.findSet(u) != disjointSet.findSet(v)) {
+                mst->addEdge(u, v, w);
+                disjointSet.makeUnion(u, v);
             }
         }
 
@@ -320,13 +338,13 @@ public:
         return status;
     }
 
-    std::pair<bool, map<N, bool>> getBipartiteAndColors() {
 
+    bool isStronglyConnected()
+    {
+
+        return true;
     }
 
-    std::pair<int, map<N, int>> getStronglyConnectedComponents();
-
-    //bool isConnected() { return getStronglyConnectedComponents().first == 1; }
     bool isConnected() {
         bool result = false;
         auto firstNode = nodes.begin();

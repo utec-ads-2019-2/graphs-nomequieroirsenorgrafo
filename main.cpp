@@ -97,11 +97,15 @@ void graphCormen(graph cormen)
 //    cout <<  edge->nodes[0]<< " " << edge->nodes[1] << " " << edge->weight << endl;
 //    cout << cormen.deleteEdge("g", "h") << endl;
     cormen.printGraph(); cout << endl;
-    //auto bipartite = ( cormen.isBipartite() == true )?"Yes":"No";
-    //cout<< "is bipartite? " << bipartite << endl;
+
     auto primCormen = cormen.prim("a");
-    //auto kruskalCormen = cormen.kruskal();
     primCormen->printGraph();
+
+    cout << endl;
+
+    auto kruskalCormen = cormen.kruskal();
+    kruskalCormen->printGraph();
+
 }
 
 void graphTestBfs(graph testBfs)

@@ -7,27 +7,24 @@ using namespace std;
 
 template <typename T>
 class DisjointSet {
-    unordered_map<T, T> parent;
+    unordered_map<T, T> parent; // < Key, parent >
 public:
     DisjointSet() = default;
 
     T& operator[](T i){ return parent[i]; }
 
-    void makeSet(std::vector<T> const &universe){
-        for (int i : universe)
-            parent[i] = i;
-    }
-    T Find(T element) {
-        if (parent[element] == element) return element;
-        return Find(parent[element]);
-    }
-    void makeUnion(T set1, T set2) {
-        T x = Find(set1);
-        T y = Find(set2);
-        parent[x] = parent[y];
+    void makeSet(T element){ parent[element] = element; }
+
+    T findSet(T element) {
+        if (parent[element] == element) { return element; }
+        return findSet(parent[element]);
     }
 
-    bool areInSameSet(T a, T b){ return find(a) == find(b); }
+    void makeUnion(T set1, T set2) {
+        T x = findSet(set1);
+        T y = findSet(set2);
+        parent[x] = parent[y];
+    }
 };
 
 
