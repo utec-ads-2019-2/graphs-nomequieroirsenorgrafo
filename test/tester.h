@@ -26,6 +26,8 @@ private:
     static graph CormmenExample();
 
 public:
+    static void testGraphcreation();
+
     static void testConnected();
 
     static void testBipartite();

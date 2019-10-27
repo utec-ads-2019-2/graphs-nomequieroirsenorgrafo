@@ -42,7 +42,7 @@ public:
     }
 
     ~Edge() {
-        delete [] (nodes);
+        delete [] nodes;
     }
 };
 #endif //GRAPHS_NOMEQUIEROIRSENORGRAFO_EDGE_H

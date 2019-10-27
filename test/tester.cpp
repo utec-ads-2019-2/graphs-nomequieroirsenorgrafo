@@ -1,63 +1,56 @@
 #include "tester.h"
 
 void Tester::testConnected() {
-    graph testBfs;
+    graph test1;
+    cout << "Test for connected graph" << endl;
+    test1.addVertex("v", 0, 0);
+    test1.addVertex("r", 0, 1);
+    test1.addVertex("s", 1, 1);
+    test1.addVertex("w", 1, 0);
+    test1.addVertex("x", 2, 0);
+    test1.addVertex("t", 2, 1);
+    test1.addVertex("y", 3, 0);
+    test1.addVertex("u", 3, 1);
 
-    testBfs.addVertex("v", 0, 0);
-    testBfs.addVertex("r", 0, 1);
-    testBfs.addVertex("s", 1, 1);
-    testBfs.addVertex("w", 1, 0);
-    testBfs.addVertex("x", 2, 0);
-    testBfs.addVertex("t", 2, 1);
-    testBfs.addVertex("y", 3, 0);
-    testBfs.addVertex("u", 3, 1);
+    test1.addEdge("v", "r");
+    test1.addEdge("r", "s");
+    test1.addEdge("w", "x");
+    test1.addEdge("s", "w");
+    test1.addEdge("w", "t");
+    test1.addEdge("x", "t");
+    test1.addEdge("x", "u");
+    test1.addEdge("x", "y");
+    test1.addEdge("t", "u");
+    test1.addEdge("u", "y");
 
-    testBfs.addEdge("v", "r");testBfs.addEdge("r", "v");
-    testBfs.addEdge("r", "s");testBfs.addEdge("s", "r");
-    testBfs.addEdge("s", "w");testBfs.addEdge("w", "s");
-    testBfs.addEdge("w", "x");testBfs.addEdge("x", "w");
-    testBfs.addEdge("w", "t");testBfs.addEdge("t", "w");
-    testBfs.addEdge("x", "t");testBfs.addEdge("t", "x");
-    testBfs.addEdge("x", "u");testBfs.addEdge("u", "x");
-    testBfs.addEdge("x", "y");testBfs.addEdge("y", "x");
-    testBfs.addEdge("t", "u");testBfs.addEdge("u", "t");
-    testBfs.addEdge("u", "y");testBfs.addEdge("y", "u");
+    //test1.printGraph();
+    //test1.bfs("s");
+    auto msg2 = "is connected graph?";
+    ASSERT(test1.isConnected(), "Wrong result in ", msg2);
 
-    testBfs.printGraph();
+    graph test2;
 
-    testBfs.bfs("s");
-    auto connected = testBfs.isConnected()?"Yes":"No";
-    cout<< "Is connected -> "<<connected<< endl;
+    test2.addVertex("9", 0, 0);
+    test2.addVertex("26", 0, 0);
+    test2.addVertex("11", 0, 0);
+    test2.addVertex("18", 0, 0);
+    test2.addVertex("19", 0, 0);
+    test2.addVertex("13", 0, 0);
+    test2.addVertex("5", 0, 0);
+    test2.addVertex("17", 0, 0);
+    test2.addVertex("23", 0, 0);
+    test2.addVertex("24", 0, 0);
 
-    graph testBfs2;
+    test2.addEdge("9", "26");
+    test2.addEdge("9", "19");
+    test2.addEdge("9", "18");
+    test2.addEdge("26", "11");
+    test2.addEdge("9", "19");
+    test2.addEdge("13", "19");
+    test2.addEdge("13", "5");
+    test2.addEdge("23", "24");
 
-    testBfs2.addVertex("9", 0, 0);
-    testBfs2.addVertex("26", 0, 0);
-    testBfs2.addVertex("11", 0, 0);
-    testBfs2.addVertex("18", 0, 0);
-    testBfs2.addVertex("19", 0, 0);
-    testBfs2.addVertex("13", 0, 0);
-    testBfs2.addVertex("5", 0, 0);
-    testBfs2.addVertex("17", 0, 0);
-    testBfs2.addVertex("23", 0, 0);
-    testBfs2.addVertex("24", 0, 0);
-
-    testBfs2.addEdge("9", "26");testBfs2.addEdge("26", "9");
-    testBfs2.addEdge("9", "19");testBfs2.addEdge("19", "9");
-    testBfs2.addEdge("9", "18");testBfs2.addEdge("18", "9");
-    testBfs2.addEdge("26", "11");testBfs2.addEdge("11", "26");
-    testBfs2.addEdge("9", "19");testBfs2.addEdge("19", "9");
-    testBfs2.addEdge("13", "19");testBfs2.addEdge("19", "13");
-    testBfs2.addEdge("13", "5");testBfs2.addEdge("5", "13");
-    testBfs2.addEdge("23", "24");testBfs2.addEdge("24", "23");
-
-    auto connected2 = testBfs2.isConnected()?"Si":"No";
-    cout<< "Graph 2 Is connected? -> "<<connected2<< endl;
-    /*for (int i=0 ; i < 8 ; i++) {
-        exp->generateFromInfixExp(equations[i]);
-        exp->askvalueVariables();
-        ASSERT(exp->evaluate() == results[i], "Wrong result in ", equations[i]);
-    }*/
+    ASSERT(!test2.isConnected(), "Wrong result in ", msg2);
 
 }
 
@@ -78,10 +71,12 @@ void Tester::testBipartite() {
     test1->addEdge("e", "f", 1);
     test1->addEdge("f", "a", 1);
 
-    test1->printGraph();
-    auto bipartite = test1->isBipartite()?"Yes":"No";
-    cout<< "is bipartite? " << bipartite << endl;
-    cout << endl;
+    //test1->printGraph();
+    auto msg2 = "case 1: is bipartite?";
+    ASSERT(test1->isBipartite(), "Wrong result in ", msg2);
+    cout << "case 1 all ok"<< endl;
+
+    delete test1;
 
     auto test2 = new graph();
     test2->addVertex("a");
@@ -95,10 +90,12 @@ void Tester::testBipartite() {
     test2->addEdge("c", "d", 1);
     test2->addEdge("d", "e", 1);
     test2->addEdge("e", "a", 1);
-    test2->printGraph();
-    bipartite = test2->isBipartite()?"Yes":"No";
-    cout<< "is bipartite? " << bipartite << endl;
-    cout << endl;
+    //test2->printGraph();
+
+    msg2 = "case 2: is bipartite?";
+    ASSERT(!test2->isBipartite(), "Wrong result in ", msg2);
+    cout << "case 2 all ok"<< endl;
+    delete test2;
 }
 
 void Tester::testPrimm() {
@@ -176,4 +173,135 @@ graph Tester::CormmenExample() {
     cormen.addEdge("h", "i", 7);
 
     return cormen;
+}
+
+void Tester::testGraphcreation() {
+    int cantVertex = 6;
+    int cantEdges = 7;
+    auto test1 = new graph();
+//  Non directed graph
+    cout<< "Test for non directed graph" << endl;
+    test1->addVertex("a", 0, 4);
+    test1->addVertex("b", 3, 6);
+    test1->addVertex("c", 6, 4);
+    test1->addVertex("d", 6, 2);
+    test1->addVertex("e", 3, 0);
+    test1->addVertex("f", 0, 2);
+
+    auto msg2 = "Adding vertex";
+    ASSERT(test1->getNumberOfNodes() == cantVertex, "Wrong result in ",
+           msg2);
+
+    test1->addEdge("a", "b");
+    test1->addEdge("b", "c");
+    test1->addEdge("c", "d");
+    test1->addEdge("d", "e");
+    test1->addEdge("e", "f");
+    test1->addEdge("f", "a");
+    test1->addEdge("d", "a");
+
+    msg2 = "Adding edges";
+    ASSERT(test1->getNumberOfEdges() == cantEdges, "Wrong result in ",
+           msg2);
+
+    test1->deleteNode("a");
+    test1->deleteNode("c");
+
+    msg2 = "Deleting 2 vertex";
+    cantVertex = cantVertex - 2;
+    ASSERT(test1->getNumberOfNodes() == cantVertex, "Wrong result in ",
+           msg2);
+
+    msg2 = "Edges after delete 2 vertex";
+    cantEdges = cantEdges - 5; //3(a) + 2(c)
+    ASSERT(test1->getNumberOfEdges() == cantEdges, "Wrong result in ",
+           msg2);
+
+    test1->deleteEdge("e", "f");
+    --cantEdges;
+    msg2 = "Edges after delete e-f edge";
+    ASSERT(test1->getNumberOfEdges() == cantEdges, "Wrong result in ",
+           msg2);
+
+    auto result = test1->findvertex("a");
+
+    msg2 = "Find deleted vertex a";
+    ASSERT(!result, "Wrong result in ", msg2);
+
+    result = test1->findvertex("b");
+
+    msg2 = "Find deleted vertex b";
+    ASSERT(result, "Wrong result in ", msg2);
+
+    result = test1->findvertex("c");
+
+    msg2 = "Find deleted vertex c";
+    ASSERT(!result, "Wrong result in ", msg2);
+    cout << "all Ok\n" <<endl;
+
+//  Directed graph
+    cout<< "Test for directed graph" << endl;
+    test1 = new graph(true);
+    test1->addVertex("q");
+    test1->addVertex("s");
+    test1->addVertex("v");
+    test1->addVertex("w");
+    test1->addVertex("t");
+    test1->addVertex("x");
+    test1->addVertex("z");
+    test1->addVertex("y");
+    test1->addVertex("r");
+    test1->addVertex("u");
+
+    cantVertex = 10;
+    msg2 = "Adding vertex";
+    ASSERT(test1->getNumberOfNodes() == cantVertex, "Wrong result in ",
+           msg2);
+
+    test1->addEdge("q","t",3);
+    test1->addEdge("q","s",3);
+    test1->addEdge("q","w",3);
+    test1->addEdge("s","v",2);
+    test1->addEdge("v","w",2);
+    test1->addEdge("w","s",2);
+    test1->addEdge("t","x",2);
+    test1->addEdge("t","y",2);
+    test1->addEdge("x","z",2);
+    test1->addEdge("z","x",2);
+    test1->addEdge("y","q",2);
+    test1->addEdge("r","u",3);
+    test1->addEdge("r","y",3);
+    test1->addEdge("u","y",3);
+    cantEdges = 14;
+
+    msg2 = "Adding edges";
+    ASSERT(test1->getNumberOfEdges() == cantEdges, "Wrong result in ",
+           msg2);
+
+    test1->deleteNode("s");
+    test1->deleteNode("w");
+    test1->deleteNode("v");
+    msg2 = "Deleting 3 vertex";
+    cantVertex = cantVertex - 3;
+    ASSERT(test1->getNumberOfNodes() == cantVertex, "Wrong result in ",
+           msg2);
+
+    msg2 = "Edges after delete 3 vertex";
+    cantEdges = cantEdges - 5;
+    ASSERT(test1->getNumberOfEdges() == cantEdges, "Wrong result in ",
+           msg2);
+
+    test1->deleteEdge("y", "q");
+    --cantEdges;
+    msg2 = "Edges after delete y-q edge";
+    ASSERT(test1->getNumberOfEdges() == cantEdges, "Wrong result in ",
+           msg2);
+
+    result = test1->findvertex("w");
+
+    msg2 = "Find deleted vertex w";
+    ASSERT(!result, "Wrong result in ", msg2);
+    cout << "all ok\n" << endl;
+
+    delete test1;
 }

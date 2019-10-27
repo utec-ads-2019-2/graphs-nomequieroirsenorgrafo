@@ -27,6 +27,9 @@ public:
 private:
     NodeSeq nodes;
     bool directed;
+
+    NodeIte findVertex(N tag) { return nodes.find(tag); }
+
 public:
     Graph(): directed(false) {}
     Graph(bool directed):directed(directed) {}
@@ -94,7 +97,7 @@ public:
 
     bool deleteNode(N tag) {
         bool result = false;
-        EdgeSeq edges;
+        EdgeSeq *edges;
         auto nodeIte = findVertex(tag);
 
         if (nodeIte != nodes.end()) {
@@ -103,11 +106,13 @@ public:
         }
         // Deletes edges with Node(tag) as destination
         for (auto nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt) {
-            edges = *nodeIt->edges;
-            for (auto edgeIt = edges.begin(); edgeIt != edges.end(); ++edgeIt) {
-                auto nodeTo = *edgeIt.node[1];
-                if (nodeTo == tag)
-                    edges.erase(edgeIt);
+            edges = &(*nodeIt).second->edges;
+            for (auto edgeIt = edges->begin(); edgeIt != edges->end(); ++edgeIt) {
+                auto nodeTo = (*edgeIt)->nodes[1]->data;
+                if (nodeTo == tag) {
+                    edges->erase(edgeIt); break;
+                }
+
             }
         }
 
@@ -115,16 +120,46 @@ public:
     }
 
     bool deleteEdge(N from, N to) {
-        /*FALTA COMPLETAR*/
-        auto deleteEdge = findEdge(from, to);
-        if (!deleteEdge) { return false; }
+        auto delEdge = findEdge(from, to);
 
-//        nodes.at(deleteEdge);
+        if (!delEdge)
+            return false;
+        else {
+            auto edges = &nodes[from]->edges;
+            for( auto edgeIt = edges->begin() ; edgeIt != edges->end() ; ++edgeIt) {
+                auto edge = *edgeIt;
+                if (edge->nodes[1]->data == to) {
+                    edges->erase(edgeIt); break;
+                }
+            }
+        }
+
+        if(!this->directed) {
+            delEdge = findEdge(to, from);
+            if(!delEdge)
+                return false;
+            else {
+                auto edges = &nodes[to]->edges;
+                for( auto edgeIt = edges->begin() ; edgeIt != edges->end() ; ++edgeIt) {
+                    auto edge = *edgeIt;
+                    if (edge->nodes[1]->data == from) {
+                        edges->erase(edgeIt); break;
+                    }
+                }
+            }
+        }
 
         return true;
     }
 
-    NodeIte findVertex(N tag) { return nodes.find(tag); }
+    bool findvertex(N tag) {
+        auto result = this->findVertex(tag);
+
+        if( result == this->nodes.end())
+            return false;
+        else
+            return true;
+    }
 
     node *findNode(N tag) {
         if (nodes.find(tag) != nodes.end()) {
@@ -142,7 +177,8 @@ public:
         if (!nodeTo) return nullptr;
 
         for (auto &&edg: nodeFrom->edges)
-            if (edg->nodes[1]->data == nodeTo->data)
+            //if (edg->nodes[1]->data == nodeTo->data)
+            if (edg->nodes[1] == nodeTo)
                 return edg;
 
         return nullptr;
@@ -382,7 +418,9 @@ public:
             auto sizeOfEdgesForEachNode = nod->sizeEdges();
             result += sizeOfEdgesForEachNode;
         }
-        result = result / 2;
+        if(!this->directed)
+            result = result / 2;
+
         return result;
     }
 
