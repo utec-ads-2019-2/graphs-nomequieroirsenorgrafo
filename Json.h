@@ -57,19 +57,6 @@ public:
         if (file_input.is_open())
             file_input.close();
 
-        cout << "Nodes -> " << newgraph->getNumberOfNodes() << endl;
-        cout << "Edges -> " << newgraph->getNumberOfEdges() << endl;
-
-        newgraph->deleteNode("4027");
-        cout << "Del aeropuerto/node 4027" << endl;
-        //cout << "Delete egde 4027 -> 3536 " << newgraph->deleteEdge("4027", "3536") << endl;
-        //cout << "Delete egde 4024 -> 1767 " << newgraph->deleteEdge("4024", "1767") << endl;
-
-        cout << "Nodes -> " << newgraph->getNumberOfNodes() << endl;
-        cout << "Edges -> " << newgraph->getNumberOfEdges() << endl;
-        printf("Densidad: %4.7f", newgraph->getDensity() );
-
-//        newgraph->recorridoMinimapita("1767");
         return *newgraph;
     }
 

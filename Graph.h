@@ -2,9 +2,9 @@
 #ifndef GRAPHS_NOMEQUIEROIRSENORGRAFO_GRAPH_H
 #define GRAPHS_NOMEQUIEROIRSENORGRAFO_GRAPH_H
 
-#include "node.h"
-#include "edge.h"
-#include "DisjoinSet.h"
+#include "components/node.h"
+#include "components/edge.h"
+#include "components/DisjoinSet.h"
 struct Traits {
     typedef string N;
     typedef float E;
@@ -278,37 +278,49 @@ public:
         set<N> blue_colored;
         int i;
         bool isbipartite = true;
-        queue<N> cola;
-        N ini;
+        unordered_map<N, bool> visited;
+        queue< pair<N, char> > cola;
+        N nodeIni;
+        char next_color;
 
         auto nodeIt = nodes.begin();
         if (nodeIt == nodes.end()) {
-            auto msg = "Node " + ini + " doesn't exist";
+            auto msg = "Node " + nodeIni + " doesn't exist";
         } else
-            ini = nodeIt->first;
+            nodeIni = nodeIt->first;
+
+        for(auto nodeIt = nodes.begin() ; nodeIt != nodes.end() ; ++nodeIt)
+            visited.insert( {nodeIt->second->data, false} );
 
         i = 0;
-        cola.push(ini);
+        cola.push(make_pair(nodeIni, 'R'));
+
+        isbipartite = assignColor(nodeIni, i, isbipartite, &red_colored, &blue_colored);
+        ++i;
 
         while (!cola.empty()) {
             auto nodeAux = cola.front();
             cola.pop();
 
-            isbipartite = assignColor(nodeAux, i, isbipartite, &red_colored, &blue_colored);
-            if(!isbipartite)
-                break;
-            ++i;
+            auto neighbours = nodes[nodeAux.first]->edges;
 
-            auto neighbours = nodes[nodeAux]->edges;
+            if(visited[nodeAux.first])
+                continue;
+
+            visited[nodeAux.first] = true;
+
+            next_color = ( nodeAux.second == 'R') ? 'B':'R';
 
             for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
                 auto name = (*it)->nodes[1]->data;
 
-                isbipartite = assignColor(name, i, isbipartite, &red_colored, &blue_colored);
+                isbipartite = assignColor(name, next_color, isbipartite, &red_colored, &blue_colored);
                 if(!isbipartite)
                     break;
 
-                cola.push(name);
+                next_color = ( nodeAux.second == 'R') ? 'B':'R';
+
+                cola.push( make_pair(name, next_color) );
             }
             ++i;
             if (!isbipartite)
@@ -318,26 +330,28 @@ public:
         return isbipartite;
     }
 
-    bool assignColor(N tag, int i, bool isbipartite, set<N> *red, set<N> *blue) {
+    bool assignColor(N tag, char color, bool isbipartite, set<N> *red, set<N> *blue) {
         bool status = isbipartite;
 
-        if (i % 2 == 0) {
-            auto result = blue->find(tag);
-            if (result != blue->end())
-                status = false;
-            else
-                red->insert(tag);
-        } else {
-            auto result = red->find(tag);
-            if (result != red->end())
-                status = false;
-            else
-                blue->insert(tag);
+        switch(color) {
+            case 'R': {
+                auto result = blue->find(tag);
+                if (result != blue->end())
+                    status = false;
+                else
+                    red->insert(tag);
+            } break;
+            case 'B': {
+                auto result = red->find(tag);
+                if (result != red->end())
+                    status = false;
+                else
+                    blue->insert(tag);
+            } break;
         }
 
         return status;
     }
-
 
     bool isStronglyConnected()
     {
@@ -370,6 +384,24 @@ public:
         }
         result = result / 2;
         return result;
+    }
+
+    E getEdgesWeightSum() {
+        E sum = 0;
+
+        for(auto nodeIt = nodes.begin() ; nodeIt != nodes.end() ; ++nodeIt) {
+            auto node = nodeIt->second;
+            auto edges = node->edges;
+            for(auto edgeIt = edges.begin() ; edgeIt != edges.end() ; ++edgeIt) {
+                auto edge = *edgeIt;
+                sum += edge->weight;
+            }
+        }
+
+        if(this->directed)
+            return sum;
+        else
+            return sum / 2;
     }
 
     E getDistance(node *nodeFrom, node *nodeTo) {

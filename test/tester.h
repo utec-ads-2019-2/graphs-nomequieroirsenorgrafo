@@ -22,8 +22,19 @@ using namespace std;
 #endif
 
 class Tester {
-    public:
-        static void test_bfs();
+private:
+    static graph CormmenExample();
+
+public:
+    static void testConnected();
+
+    static void testBipartite();
+
+    static void testPrimm();
+
+    static void testKruskal();
+
+    static void testFromJson();
 };
 
 #endif
