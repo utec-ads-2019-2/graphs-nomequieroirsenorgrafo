@@ -6,31 +6,55 @@ using namespace std;
 
 int main() {
 
-    auto read = new Json<graph>("airportsClean.json");
-    auto graph = read->parseJson();
-
-    Tester::testGraphcreation();
-    Tester::testConnected();
-    Tester::testBipartite();
+    auto json1 = new Json<graph>("airportsTestWS.json");
+    auto graphTest2 = json1->parseJson();
 
     cout << "JSON" << endl;
-    cout << "Nodes -> " << graph.getNumberOfNodes() << endl;
-    cout << "Edges -> " << graph.getNumberOfEdges() << endl;
-    printf("Densidad: %4.7f\n", graph.getDensity() );
+    cout << "Nodes -> " << graphTest2.getNumberOfNodes() << endl;
+    cout << "Edges -> " << graphTest2.getNumberOfEdges() << endl;
+    printf("Densidad: %4.7f\n", graphTest2.getDensity() );
+    auto connected = graphTest2.isConnected() ? "Yes" : "No";
+    cout << "is connected? " << connected << endl;
+    auto bipartite = graphTest2.isBipartite() ? "Yes" : "No";
+    cout << "is bipartite? "<< bipartite << endl;
 
-    //newgraph->deleteNode("4027");
-    //cout << "Del aeropuerto/node 4027" << endl;
-    //cout << "Delete egde 4027 -> 3536 " << newgraph->deleteEdge("4027", "3536") << endl;
-    //cout << "Delete egde 4024 -> 1767 " << newgraph->deleteEdge("4024", "1767") << endl;
-
-    //auto mstPrimm = graph.prim("4027");
-    //auto mstKruskal = graph.kruskal();
+    /*auto mstPrimm = graphTest2.prim("4027");
+    auto mstKruskal = graphTest2.kruskal();
     //mstKruskal->printGraph();
-    //printf("Primm: Weight: %4.7f\n", mstPrimm->getEdgesWeightSum() );
-    //printf("Kruskal: Weight: %4.7f\n", mstKruskal->getEdgesWeightSum() );
+    printf("Primm: Weight: %4.7f\n", mstPrimm->getEdgesWeightSum() );
+    printf("Kruskal: Weight: %4.7f\n", mstKruskal->getEdgesWeightSum() );
 
+    auto json2 = new Json<graph>("bipartito.json");
+    graphTest2 = json2->parseJson();
+
+    cout << ">>JSON bipartito.json<<" << endl;
+    cout << "Nodes -> " << graphTest2.getNumberOfNodes() << endl;
+    cout << "Edges -> " << graphTest2.getNumberOfEdges() << endl;
+    printf("Densidad: %4.7f\n", graphTest2.getDensity() );
+    connected = graphTest2.isConnected() ? "Yes" : "No";
+    cout << "is connected? " << connected << endl;
+    bipartite = graphTest2.isBipartite() ? "Yes" : "No";
+    cout << "is bipartite? "<< bipartite << endl;
+
+    auto json3 = new Json<graph>("conexo.json");
+    graphTest2 = json3->parseJson();
+
+    cout << ">>JSON conexo.json<<" << endl;
+    cout << "Nodes -> " << graphTest2.getNumberOfNodes() << endl;
+    cout << "Edges -> " << graphTest2.getNumberOfEdges() << endl;
+    printf("Densidad: %4.7f\n", graphTest2.getDensity() );
+    connected = graphTest2.isConnected() ? "Yes" : "No";
+    cout << "is connected? " << connected << endl;
+    bipartite = graphTest2.isBipartite() ? "Yes" : "No";
+    cout << "is bipartite? "<< bipartite << endl;*/
+
+    /*Tester::testGraphcreation();
+    Tester::testConnected();
+    Tester::testBipartite();*/
     //Tester::testPrimm();
     //Tester::testKruskal();
+
+    delete json1;
 
     return 0;
 }

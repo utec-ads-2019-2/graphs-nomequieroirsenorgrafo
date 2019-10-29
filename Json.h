@@ -50,7 +50,8 @@ public:
             auto destinations = airport.at("destinations");
             for (json::iterator it2 = destinations.begin(); it2 != destinations.end(); ++it2){
                 auto tagTo =  (*it2);
-                newgraph->addEdge( tagFrom,  tagTo);
+                //newgraph->addEdge( tagFrom,  tagTo);
+                newgraph->addDirectedEdge( tagFrom,  tagTo);
             }
         }
 

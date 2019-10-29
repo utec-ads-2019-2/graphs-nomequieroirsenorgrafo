@@ -5,6 +5,7 @@
 #include "components/node.h"
 #include "components/edge.h"
 #include "components/DisjoinSet.h"
+
 struct Traits {
     typedef string N;
     typedef float E;
@@ -31,8 +32,9 @@ private:
     NodeIte findVertex(N tag) { return nodes.find(tag); }
 
 public:
-    Graph(): directed(false) {}
-    Graph(bool directed):directed(directed) {}
+    Graph() : directed(false) {}
+
+    Graph(bool directed) : directed(directed) {}
 
     node *addVertex(N tag, double x, double y) {
         auto newNode = new node(tag, x, y); //Node or vertex
@@ -95,6 +97,20 @@ public:
         return true;
     }
 
+    bool addDirectedEdge(N from, N to) {
+        if ((nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end())) { return false; }
+
+        auto weight = getDistance(nodes[from], nodes[to]);
+
+        node *nodeFrom = nodes[from];
+        node *nodeTo = nodes[to];
+
+        auto newEdge = new edge(nodeFrom, nodeTo, weight);
+        nodeFrom->edges.emplace_back(newEdge);
+        return true;
+
+    }
+
     bool deleteNode(N tag) {
         bool result = false;
         EdgeSeq *edges;
@@ -110,7 +126,8 @@ public:
             for (auto edgeIt = edges->begin(); edgeIt != edges->end(); ++edgeIt) {
                 auto nodeTo = (*edgeIt)->nodes[1]->data;
                 if (nodeTo == tag) {
-                    edges->erase(edgeIt); break;
+                    edges->erase(edgeIt);
+                    break;
                 }
 
             }
@@ -126,24 +143,26 @@ public:
             return false;
         else {
             auto edges = &nodes[from]->edges;
-            for( auto edgeIt = edges->begin() ; edgeIt != edges->end() ; ++edgeIt) {
+            for (auto edgeIt = edges->begin(); edgeIt != edges->end(); ++edgeIt) {
                 auto edge = *edgeIt;
                 if (edge->nodes[1]->data == to) {
-                    edges->erase(edgeIt); break;
+                    edges->erase(edgeIt);
+                    break;
                 }
             }
         }
 
-        if(!this->directed) {
+        if (!this->directed) {
             delEdge = findEdge(to, from);
-            if(!delEdge)
+            if (!delEdge)
                 return false;
             else {
                 auto edges = &nodes[to]->edges;
-                for( auto edgeIt = edges->begin() ; edgeIt != edges->end() ; ++edgeIt) {
+                for (auto edgeIt = edges->begin(); edgeIt != edges->end(); ++edgeIt) {
                     auto edge = *edgeIt;
                     if (edge->nodes[1]->data == from) {
-                        edges->erase(edgeIt); break;
+                        edges->erase(edgeIt);
+                        break;
                     }
                 }
             }
@@ -155,7 +174,7 @@ public:
     bool findvertex(N tag) {
         auto result = this->findVertex(tag);
 
-        if( result == this->nodes.end())
+        if (result == this->nodes.end())
             return false;
         else
             return true;
@@ -233,7 +252,7 @@ public:
     }
 
     self *prim(N start) {
-        if ( nodes.find(start) == nodes.end()) {
+        if (nodes.find(start) == nodes.end()) {
             throw runtime_error("Selected vertex is not part of the graph");
         }
         self *mst = new self;
@@ -273,14 +292,12 @@ public:
         return mst;
     }
 
-    self *kruskal()
-    {
+    self *kruskal() {
         DisjointSet<N> disjointSet;
         self *mst = new self;
         multimap<E, pair<N, N> > sorted;
 
-        for (auto iterNod = nodes.begin(); iterNod != nodes.end(); ++iterNod)
-        {
+        for (auto iterNod = nodes.begin(); iterNod != nodes.end(); ++iterNod) {
             mst->addVertex(iterNod->first);
         }
 
@@ -295,11 +312,11 @@ public:
             }
         }
 
-        for (auto itSorted = sorted.begin(); itSorted != sorted.end(); ++itSorted)
-        {
+        for (auto itSorted = sorted.begin(); itSorted != sorted.end(); ++itSorted) {
             auto w = itSorted->first;
             auto pairNN = itSorted->second;
-            auto u = pairNN.first; auto v = pairNN.second;
+            auto u = pairNN.first;
+            auto v = pairNN.second;
             if (disjointSet.findSet(u) != disjointSet.findSet(v)) {
                 mst->addEdge(u, v, w);
                 disjointSet.makeUnion(u, v);
@@ -315,7 +332,7 @@ public:
         int i;
         bool isbipartite = true;
         unordered_map<N, bool> visited;
-        queue< pair<N, char> > cola;
+        queue<pair<N, char> > cola;
         N nodeIni;
         char next_color;
 
@@ -325,8 +342,8 @@ public:
         } else
             nodeIni = nodeIt->first;
 
-        for(auto nodeIt = nodes.begin() ; nodeIt != nodes.end() ; ++nodeIt)
-            visited.insert( {nodeIt->second->data, false} );
+        for (auto nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
+            visited.insert({nodeIt->second->data, false});
 
         i = 0;
         cola.push(make_pair(nodeIni, 'R'));
@@ -340,23 +357,23 @@ public:
 
             auto neighbours = nodes[nodeAux.first]->edges;
 
-            if(visited[nodeAux.first])
+            if (visited[nodeAux.first])
                 continue;
 
             visited[nodeAux.first] = true;
 
-            next_color = ( nodeAux.second == 'R') ? 'B':'R';
+            next_color = (nodeAux.second == 'R') ? 'B' : 'R';
 
             for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
                 auto name = (*it)->nodes[1]->data;
 
                 isbipartite = assignColor(name, next_color, isbipartite, &red_colored, &blue_colored);
-                if(!isbipartite)
+                if (!isbipartite)
                     break;
 
-                next_color = ( nodeAux.second == 'R') ? 'B':'R';
+                next_color = (nodeAux.second == 'R') ? 'B' : 'R';
 
-                cola.push( make_pair(name, next_color) );
+                cola.push(make_pair(name, next_color));
             }
             ++i;
             if (!isbipartite)
@@ -369,28 +386,29 @@ public:
     bool assignColor(N tag, char color, bool isbipartite, set<N> *red, set<N> *blue) {
         bool status = isbipartite;
 
-        switch(color) {
+        switch (color) {
             case 'R': {
                 auto result = blue->find(tag);
                 if (result != blue->end())
                     status = false;
                 else
                     red->insert(tag);
-            } break;
+            }
+                break;
             case 'B': {
                 auto result = red->find(tag);
                 if (result != red->end())
                     status = false;
                 else
                     blue->insert(tag);
-            } break;
+            }
+                break;
         }
 
         return status;
     }
 
-    bool isStronglyConnected()
-    {
+    bool isStronglyConnected() {
 
         return true;
     }
@@ -418,7 +436,7 @@ public:
             auto sizeOfEdgesForEachNode = nod->sizeEdges();
             result += sizeOfEdgesForEachNode;
         }
-        if(!this->directed)
+        if (!this->directed)
             result = result / 2;
 
         return result;
@@ -427,16 +445,16 @@ public:
     E getEdgesWeightSum() {
         E sum = 0;
 
-        for(auto nodeIt = nodes.begin() ; nodeIt != nodes.end() ; ++nodeIt) {
+        for (auto nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt) {
             auto node = nodeIt->second;
             auto edges = node->edges;
-            for(auto edgeIt = edges.begin() ; edgeIt != edges.end() ; ++edgeIt) {
+            for (auto edgeIt = edges.begin(); edgeIt != edges.end(); ++edgeIt) {
                 auto edge = *edgeIt;
                 sum += edge->weight;
             }
         }
 
-        if(this->directed)
+        if (this->directed)
             return sum;
         else
             return sum / 2;
