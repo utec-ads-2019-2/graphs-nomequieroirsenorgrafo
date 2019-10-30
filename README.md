@@ -1,4 +1,9 @@
-# Graph
-> Se usa la librería JSON for Modern c++ para leer los json. 
+## ADS Graph Project
 
-![](nodes_edges.png)
+## Group 9 Members
+  - Marini, Piero 
+  - Mosquera, Raul 
+  - Solano, Felix 
+
+## Dependencies
+  - JSON for Modern c++ libry for JSON reading/parsing. 
