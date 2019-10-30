@@ -37,6 +37,8 @@ public:
     static void testKruskal();
 
     static void testFromJson();
+
+    static void testStronglyConnected();
 };
 
 #endif

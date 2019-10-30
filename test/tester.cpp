@@ -1,4 +1,52 @@
 #include "tester.h"
+#include "Json.h"
+
+void Tester::testStronglyConnected() {
+    auto test1 = new graph(true);
+
+    // CORMEN DIRECTED GRAPH
+    test1->addVertex("q");
+    test1->addVertex("r");
+    test1->addVertex("s");
+    test1->addVertex("t");
+    test1->addVertex("u");
+    test1->addVertex("v");
+    test1->addVertex("w");
+    test1->addVertex("x");
+    test1->addVertex("y");
+    test1->addVertex("z");
+
+    test1->addEdge("r", "u", 1);
+    test1->addEdge("r", "y", 1);
+    test1->addEdge("u", "y", 1);
+    test1->addEdge("y", "q", 1);
+    test1->addEdge("t", "x", 1);
+    test1->addEdge("t", "y", 1);
+    test1->addEdge("x", "z", 1);
+    test1->addEdge("z", "x", 1);
+    test1->addEdge("q", "s", 1);
+    test1->addEdge("q", "w", 1);
+    test1->addEdge("q", "t", 1);
+    test1->addEdge("s", "v", 1);
+    test1->addEdge("v", "w", 1);
+    test1->addEdge("w", "s", 1);
+
+//    test1->printGraph();
+    auto msg2 = "is strongly connected graph?";
+    ASSERT(!test1->isStronglyConnected(), "Wrong result in ", msg2);
+    cout << "PASS STRONGLY CONNECTED"<< endl;
+
+    delete test1;
+
+    // TEST JSON
+    auto json1 = new Json<graph>("airports.json");
+    auto test2 = json1->parseJson();
+    auto msg3 = "is strongly connected graph?";
+
+    ASSERT(!test2.isStronglyConnected(), "Wrong result in ", msg3);
+    cout << "PASS STRONGLY CONNECTED"<< endl;
+}
+
 
 void Tester::testConnected() {
     graph test1;

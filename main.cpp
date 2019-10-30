@@ -6,23 +6,27 @@ using namespace std;
 
 int main() {
 
-    auto json1 = new Json<graph>("cmake-build-debug/airportsTestWS.json");
-    auto graphTest2 = json1->parseJson();
+//    auto json1 = new Json<graph>("airportsTestWS.json");
+//    auto graphTest2 = json1->parseJson();
+//
+//    graphTest2.printGraph(); cout << endl;
+//    auto primGraphTest2 = graphTest2.prim("1229");
+//    primGraphTest2->printGraph();
+//
+//    cout << "JSON" << endl;
+//    cout << "Nodes -> " << graphTest2.getNumberOfNodes() << endl;
+//    cout << "Edges -> " << graphTest2.getNumberOfEdges() << endl;
+//    printf("Densidad: %4.7f\n", graphTest2.getDensity() );
+//    auto connected = graphTest2.isConnected() ? "Yes" : "No";
+//    cout << "is connected? " << connected << endl;
+//    auto bipartite = graphTest2.isBipartite() ? "Yes" : "No";
+//    cout << "is bipartite? "<< bipartite << endl;
+//
+//    auto stronglyConnected = graphTest2.isStronglyConnected() ? "Yes" : "No";
+//    cout << "is strongly connected? " << stronglyConnected << endl << endl;
 
-    graphTest2.printGraph(); cout << endl;
-    auto primGraphTest2 = graphTest2.prim("1229");
-    primGraphTest2->printGraph();
 
-    cout << "JSON" << endl;
-    cout << "Nodes -> " << graphTest2.getNumberOfNodes() << endl;
-    cout << "Edges -> " << graphTest2.getNumberOfEdges() << endl;
-    printf("Densidad: %4.7f\n", graphTest2.getDensity() );
-    auto connected = graphTest2.isConnected() ? "Yes" : "No";
-    cout << "is connected? " << connected << endl;
-    auto bipartite = graphTest2.isBipartite() ? "Yes" : "No";
-    cout << "is bipartite? "<< bipartite << endl;
-    auto stronglyConnected = graphTest2.isStronglyConnected() ? "Yes" : "No";
-    cout << "is strongly connected? " << stronglyConnected << endl;
+
 
     /*auto mstPrimm = graphTest2.prim("4027");
     auto mstKruskal = graphTest2.kruskal();
@@ -54,11 +58,12 @@ int main() {
     bipartite = graphTest2.isBipartite() ? "Yes" : "No";
     cout << "is bipartite? "<< bipartite << endl;*/
 
-    /*Tester::testGraphcreation();
+    Tester::testGraphcreation();
     Tester::testConnected();
-    Tester::testBipartite();*/
+    Tester::testBipartite();
     Tester::testPrimm();
-    //Tester::testKruskal();
+    Tester::testKruskal();
+    Tester::testStronglyConnected();
 
 //    delete json1;
 
