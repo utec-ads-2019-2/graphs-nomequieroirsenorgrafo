@@ -6,7 +6,7 @@ using namespace std;
 
 int main() {
 
-    auto json1 = new Json<graph>("airportsTestWS.json");
+    auto json1 = new Json<graph>("data/airportsTestWS.json");
     auto graphTest2 = json1->parseJson();
 
     cout << "JSON" << endl;
