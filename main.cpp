@@ -9,6 +9,10 @@ int main() {
     auto json1 = new Json<graph>("cmake-build-debug/airportsTestWS.json");
     auto graphTest2 = json1->parseJson();
 
+    graphTest2.printGraph(); cout << endl;
+    auto primGraphTest2 = graphTest2.prim("1229");
+    primGraphTest2->printGraph();
+
     cout << "JSON" << endl;
     cout << "Nodes -> " << graphTest2.getNumberOfNodes() << endl;
     cout << "Edges -> " << graphTest2.getNumberOfEdges() << endl;
@@ -53,10 +57,10 @@ int main() {
     /*Tester::testGraphcreation();
     Tester::testConnected();
     Tester::testBipartite();*/
-    //Tester::testPrimm();
+    Tester::testPrimm();
     //Tester::testKruskal();
 
-    delete json1;
+//    delete json1;
 
     return 0;
 }
