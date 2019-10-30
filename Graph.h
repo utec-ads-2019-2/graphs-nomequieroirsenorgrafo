@@ -252,19 +252,24 @@ public:
     }
 
     self *prim(N start) {
-        if (nodes.find(start) == nodes.end()) {
-            throw runtime_error("Selected vertex is not part of the graph");
-        }
+        if ( nodes.find(start) == nodes.end() ) { throw runtime_error("Selected vertex is not part of the graph"); }
+        if ( directed ) { throw runtime_error("Prim only works on undirected graphs"); }
+
         self *mst = new self;
         unordered_map<N, N> origin;
         unordered_map<N, bool> visited;
         unordered_map<N, E> weight;
-        priority_queue<pair<E, N>, vector<pair<E, N>>, greater<>> Q;
+        priority_queue<pair<E, N>, std::vector<pair<E, N>>, greater<>> Q;
 
         Q.push(make_pair(0, start));
         origin[start] = start;
 
-        while (!Q.empty()) {
+        for (auto iterNod = nodes.begin(); iterNod != nodes.end(); ++iterNod) {
+            mst->addVertex(iterNod->first);
+        }
+
+        while (!Q.empty())
+        {
             N dest = Q.top().second;
             E minWeight = Q.top().first;
             Q.pop();
@@ -272,13 +277,10 @@ public:
             if (visited[dest]) { continue; }
             visited[dest] = true;
 
-            if (mst->nodes.find(dest) == mst->nodes.end())
-                mst->addVertex(nodes[dest]);
+            if (origin[dest] != dest) { mst->addEdge(origin[dest], dest, minWeight); }
 
-            if (origin[dest] != dest)
-                mst->addEdge(origin[dest], dest, minWeight);
-
-            for (auto edg : nodes[dest]->edges) {
+            for (auto edg : nodes.at(dest)->edges)
+            {
                 auto adjNode = edg->nodes[1]->data;
                 auto adjWeight = edg->weight;
                 if (visited[adjNode]) { continue; }
@@ -289,6 +291,7 @@ public:
                 }
             }
         }
+
         return mst;
     }
 
@@ -461,13 +464,13 @@ public:
     }
 
     E getDistance(node *nodeFrom, node *nodeTo) {
-        E distance = 0;
-        E x, y;
+        const int EARTH_DIAMETER = 12742;
+        auto latFrom = nodeFrom->x; auto latTo = nodeTo->x;
+        auto longFrom = nodeFrom->y; auto longTo = nodeTo->y;
 
-        x = pow(nodeTo->x - nodeFrom->x, 2);
-        y = pow(nodeTo->y - nodeFrom->y, 2);
-
-        distance = sqrt(x + y);
+        auto distance =  EARTH_DIAMETER*asin(sqrt(pow(sin((latTo - latFrom) * (M_PI / 180) / 2), 2) +
+                                         pow(sin((longTo - longFrom) * (M_PI / 180) / 2), 2) *
+                                         cos(latFrom * M_PI / 180) * cos(latTo * M_PI / 180)));
 
         return distance;
     }
