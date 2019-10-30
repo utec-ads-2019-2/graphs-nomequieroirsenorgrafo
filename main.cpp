@@ -6,7 +6,7 @@ using namespace std;
 
 int main() {
 
-    auto json1 = new Json<graph>("airportsTestWS.json");
+    auto json1 = new Json<graph>("cmake-build-debug/airportsTestWS.json");
     auto graphTest2 = json1->parseJson();
 
     cout << "JSON" << endl;
@@ -17,6 +17,8 @@ int main() {
     cout << "is connected? " << connected << endl;
     auto bipartite = graphTest2.isBipartite() ? "Yes" : "No";
     cout << "is bipartite? "<< bipartite << endl;
+    auto stronglyConnected = graphTest2.isStronglyConnected() ? "Yes" : "No";
+    cout << "is strongly connected? " << stronglyConnected << endl;
 
     /*auto mstPrimm = graphTest2.prim("4027");
     auto mstKruskal = graphTest2.kruskal();

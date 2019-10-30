@@ -17,12 +17,12 @@ public:
 
     Edge(E weight) : weight(weight) {}
 
-    Edge(node* from, node* to): weight(0){
+    Edge(node* from, node* to) : weight(0) {
         this->nodes[0] = from;
         this->nodes[1] = to;
     }
 
-    Edge(node* from, node* to, E weight):weight(weight){
+    Edge(node* from, node* to, E weight) : weight(weight) {
         this->nodes[0] = from;
         this->nodes[1] = to;
     }

@@ -203,7 +203,45 @@ public:
         return nullptr;
     }
 
-    unordered_map<N, N> bfs(N ini) { //Breath First Search
+	self getReversedGraph() {
+		self g{directed};
+
+		for (auto it = nodes.begin(); it != nodes.end(); it++) {
+            auto neighbours = it->second->edges;
+			g.addVertex(it->second);
+
+            for (auto neighIter = neighbours.begin(); neighIter != neighbours.end(); ++neighIter) {
+				g.addDirectedEdge((*neighIter)->nodes[1]->data, (*neighIter)->nodes[0]->data);
+            }
+		}
+
+		return g;
+	}
+
+	void bfsVisitor(N ini, bool visited[]) {
+		queue<N> cola;
+
+        cola.push(ini);
+
+        while (!cola.empty()) {
+            auto nodeAux = cola.front();
+            cola.pop();
+
+            auto neighbours = nodes[nodeAux]->edges;
+
+			int idx = 0;
+            for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
+                auto name = (*it)->nodes[1]->data;
+				if (!visited[idx]) {
+					visited[idx] = true;
+					cola.push(name);
+				}
+				idx++;
+            }
+        }
+	}
+
+    unordered_map<N, N> bfs(N ini) { //Breadth First Search
 
         unordered_map<N, char> color; //(W)hite, (G)ray or (B)lack
         unordered_map<N, int> distance;
@@ -409,6 +447,32 @@ public:
     }
 
     bool isStronglyConnected() {
+
+		auto numNodes = getNumberOfNodes();
+		bool visited[numNodes];
+		for (int i = 0; i < numNodes; ++i)
+			visited[i] = false; 
+
+		auto firstNode = nodes.begin();
+		bfsVisitor(firstNode->first, visited);
+		for (int i = 0; i < numNodes; i++) 
+			if (visited[i] == false) 
+				 return false; 
+
+		// Undirected graphs just need to do a BFS and check that all nodes were visited
+		if (!directed)
+			return true;
+
+		self gr = getReversedGraph();
+
+		for (int i = 0; i < numNodes; ++i)
+			visited[i] = false; 
+
+		auto firstNodeR = gr.nodes.begin();
+		gr.bfsVisitor(firstNodeR->first, visited);
+		for (int i = 0; i < numNodes; i++) 
+			if (visited[i] == false) 
+				 return false; 
 
         return true;
     }
