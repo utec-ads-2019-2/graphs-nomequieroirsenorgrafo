@@ -33,15 +33,9 @@ private:
 
 public:
     Graph() : directed(false) {}
-
     Graph(bool directed) : directed(directed) {}
 
-    node *addVertex(N tag, double x, double y) {
-        auto newNode = new node(tag, x, y); //Node or vertex
-        nodes.insert({tag, newNode});
-
-        return newNode;
-    }
+    bool isDirected(){ return directed; }
 
     void addVertex(node *oldNode) {
         node *newNode = new node(oldNode);
@@ -55,6 +49,12 @@ public:
         return newNode;
     }
 
+    node *addEdge(N tag, double x, double y) {
+        auto newNode = new node(tag, x, y); //Node or vertex
+        nodes.insert({tag, newNode});
+
+        return newNode;
+    }
     bool addEdge(N from, N to, E weight) {
         if ((nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end())) { return false; }
 
@@ -365,6 +365,53 @@ public:
         }
 
         return mst;
+    }
+
+    auto floydWarshall(){
+        unordered_map< N, unordered_map<N, E> > distances;
+        unordered_map< N, unordered_map<N, N> > path;
+
+        // Setear a 0 las diagonales y poner INFINITY a lo demas
+        for (auto && itMapVertexU: this->nodes)
+        {
+            for (auto && itMapVertexV: this->nodes) {
+                distances[itMapVertexU.first][itMapVertexV.first] = INFINITY;
+            }
+            distances[itMapVertexU.first][itMapVertexU.first] = 0;
+        }
+
+        // Poner los pesos en cada parte de la matriz 0
+        for (auto && itVertex: this->nodes)
+        {
+            for (auto && itEdge : itVertex.second->edges)
+            {
+                auto nodeFrom = itVertex.first;
+                auto nodeTo = itEdge->nodes[1]->data;
+                auto edgeWeight = itEdge->weight;
+
+                distances[nodeFrom][nodeTo] = edgeWeight;
+                path[nodeFrom][nodeTo] = nodeTo;
+            }
+        }
+
+        // Empieza el algoritmo de floyd wharshall
+        for(auto && itForEachMatrix : this->nodes)
+        {
+            for(auto && rowsOfTheMatrix : this->nodes)
+            {
+                for(auto && columnsOfTheMatrix : this->nodes)
+                {
+                    auto k = itForEachMatrix.first;
+                    auto i = rowsOfTheMatrix.first;
+                    auto j = columnsOfTheMatrix.first;
+                    // A[i,j] = min(A[i, j], A[i,k] + A[k,j]);
+                    distances[i][j] = std::min(distances[i][j], distances[i][k] + distances[k][j]);
+                    path[i][j] = k;
+                }
+            }
+        }
+
+        return std::make_pair(distances, path);
     }
 
     bool isBipartite() {
