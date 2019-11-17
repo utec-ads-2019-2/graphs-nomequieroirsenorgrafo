@@ -23,8 +23,7 @@ public:
 
     typedef unordered_map<N, node *> NodeSeq;
     typedef vector<edge *> EdgeSeq;
-    typedef typename NodeSeq::iterator NodeIte;
-//    typedef typename EdgeSeq::iterator EdgeIte;
+    typedef typename NodeSeq::const_iterator NodeIte;
 private:
     NodeSeq nodes;
     bool directed;
@@ -34,6 +33,18 @@ private:
 public:
     Graph() : directed(false) {}
     Graph(bool directed) : directed(directed) {}
+
+    Graph(const Graph &oldGraph) { //Copy constructor
+
+        if ( this->nodes.size() == 0 ) {
+            for( auto nodeIte = oldGraph.firstNode() ;
+                 nodeIte != oldGraph.lastNode() ;
+                 nodeIte++) {
+                this->nodes.insert( *nodeIte );
+            }
+        }
+
+    }
 
     bool isDirected(){ return directed; }
 
@@ -49,7 +60,7 @@ public:
         return newNode;
     }
 
-    node *addEdge(N tag, double x, double y) {
+    node *addVertex(N tag, double x, double y) {
         auto newNode = new node(tag, x, y); //Node or vertex
         nodes.insert({tag, newNode});
 
@@ -610,7 +621,14 @@ public:
         }
         cout << endl;
     }
+//  Iterators
+    NodeIte firstNode() const {
+        return this->nodes.begin();
+    }
 
+    NodeIte lastNode() const {
+        return this->nodes.end();
+    }
     ~Graph() {
         this->nodes.clear();
     }

@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <assert.h>
-#include "../Graph.h"
+#include "src/Graph.h"
 
 using namespace std;
 
@@ -36,9 +36,17 @@ public:
 
     static void testKruskal();
 
-    static void testFromJson();
+    static void testFromJson(string fileName);
+
+    static void testBipartiteFromJson(string fileName);
+
+    static void testConnectedFromJson(string fileName);
 
     static void testStronglyConnected();
+
+    static void testdiGraphToJSON(string fileName);
+
+    static void testnondirectedGraphToJSON(string fileName);
 };
 
 #endif

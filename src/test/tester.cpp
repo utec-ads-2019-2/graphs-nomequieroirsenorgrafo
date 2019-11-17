@@ -1,5 +1,5 @@
 #include "tester.h"
-#include "Json.h"
+#include "src/Json.h"
 
 void Tester::testStronglyConnected() {
     auto test1 = new graph(true);
@@ -39,7 +39,7 @@ void Tester::testStronglyConnected() {
     delete test1;
 
     // TEST JSON
-    auto json1 = new Json<graph>("airports.json");
+    auto json1 = new Json<graph>("../data/airports.json");
     auto test2 = json1->parseJson();
     auto msg3 = "is strongly connected graph?";
 
@@ -352,4 +352,124 @@ void Tester::testGraphcreation() {
     cout << "all ok\n" << endl;
 
     delete test1;
+}
+
+void Tester::testBipartiteFromJson(string fileName) {
+    auto json12 = new Json<graph>(fileName);
+    auto graphTest2 = json12->parseJson();
+
+    cout << ">>JSON bipartito.json<<" << endl;
+    cout << "Nodes -> " << graphTest2.getNumberOfNodes() << endl;
+    cout << "Edges -> " << graphTest2.getNumberOfEdges() << endl;
+    printf("Densidad: %4.7f\n", graphTest2.getDensity() );
+    auto connected = graphTest2.isConnected() ? "Yes" : "No";
+    cout << "is connected? " << connected << endl;
+    auto bipartite = graphTest2.isBipartite() ? "Yes" : "No";
+    cout << "is bipartite? "<< bipartite << endl;
+
+    delete json12;
+}
+
+void Tester::testConnectedFromJson(string fileName) {
+    auto json4 = new Json<graph>(fileName);
+    auto graphTest2 = json4->parseJson();
+
+    cout << ">>JSON conexo.json<<" << endl;
+    cout << "Nodes -> " << graphTest2.getNumberOfNodes() << endl;
+    cout << "Edges -> " << graphTest2.getNumberOfEdges() << endl;
+    printf("Densidad: %4.7f\n", graphTest2.getDensity() );
+    auto connected = graphTest2.isConnected() ? "Yes" : "No";
+    cout << "is connected? " << connected << endl;
+    auto bipartite = graphTest2.isBipartite() ? "Yes" : "No";
+    cout << "is bipartite? "<< bipartite << endl;
+}
+
+void Tester::testdiGraphToJSON(string fileName) {
+    //  Directed graph
+    cout<< "Test for generate JSON from directed graph" << endl;
+    //auto test2 = new graph(true); // doesn't work, call destructor
+    auto test2 =  graph(true);
+    test2.addVertex("q");
+    test2.addVertex("s");
+    test2.addVertex("v");
+    test2.addVertex("w");
+    test2.addVertex("t");
+    test2.addVertex("x");
+    test2.addVertex("z");
+    test2.addVertex("y");
+    test2.addVertex("r");
+    test2.addVertex("u");
+
+    test2.addEdge("q","t",3);
+    test2.addEdge("q","s",3);
+    test2.addEdge("q","w",3);
+    test2.addEdge("s","v",2);
+    test2.addEdge("v","w",2);
+    test2.addEdge("w","s",2);
+    test2.addEdge("t","x",2);
+    test2.addEdge("t","y",2);
+    test2.addEdge("x","z",2);
+    test2.addEdge("z","x",2);
+    test2.addEdge("y","q",2);
+    test2.addEdge("r","u",3);
+    test2.addEdge("r","y",3);
+    test2.addEdge("u","y",3);
+
+    auto json3 = new Json<graph>(fileName);
+    json3->parseGraph(test2);
+}
+
+void Tester::testnondirectedGraphToJSON(string fileName) {
+    //Graph to JSON: non directed
+    cout<< "Test for generate JSON from non-directed graph" << endl;
+    graph test1;
+    test1.addVertex("v", 0, 0);
+    test1.addVertex("r", 0, 1);
+    test1.addVertex("s", 1, 1);
+    test1.addVertex("w", 1, 0);
+    test1.addVertex("x", 2, 0);
+    test1.addVertex("t", 2, 1);
+    test1.addVertex("y", 3, 0);
+    test1.addVertex("u", 3, 1);
+
+    test1.addEdge("v", "r");
+    test1.addEdge("r", "s");
+    test1.addEdge("w", "x");
+    test1.addEdge("s", "w");
+    test1.addEdge("w", "t");
+    test1.addEdge("x", "t");
+    test1.addEdge("x", "u");
+    test1.addEdge("x", "y");
+    test1.addEdge("t", "u");
+    test1.addEdge("u", "y");
+
+    auto json2 = new Json<graph>(fileName);
+    json2->parseGraph(test1);
+}
+
+void Tester::testFromJson(string fileName) {
+    auto json1 = new Json<graph>(fileName);
+    auto graphTest2 = json1->parseJson();
+
+    graphTest2.printGraph(); cout << endl;
+    auto primGraphTest2 = graphTest2.prim("1229");
+    primGraphTest2->printGraph();
+
+    cout << "JSON" << endl;
+    cout << "Nodes -> " << graphTest2.getNumberOfNodes() << endl;
+    cout << "Edges -> " << graphTest2.getNumberOfEdges() << endl;
+    printf("Densidad: %4.7f\n", graphTest2.getDensity() );
+    auto connected = graphTest2.isConnected() ? "Yes" : "No";
+    cout << "is connected? " << connected << endl;
+    auto bipartite = graphTest2.isBipartite() ? "Yes" : "No";
+    cout << "is bipartite? "<< bipartite << endl;
+
+    auto stronglyConnected = graphTest2.isStronglyConnected() ? "Yes" : "No";
+    cout << "is strongly connected? " << stronglyConnected << endl << endl;
+
+    auto mstPrimm = graphTest2.prim("4027");
+    auto mstKruskal = graphTest2.kruskal();
+    //mstKruskal->printGraph();
+    printf("Primm: Weight: %4.7f\n", mstPrimm->getEdgesWeightSum() );
+    printf("Kruskal: Weight: %4.7f\n", mstKruskal->getEdgesWeightSum() );
 }

@@ -1,0 +1,86 @@
+[
+    {
+        "Id": "t",
+        "Latitude": 1.0,
+        "Longitude": 2.0,
+        "Name": "",
+        "destinations": [
+            "w",
+            "x",
+            "u"
+        ]
+    },
+    {
+        "Id": "x",
+        "Latitude": 0.0,
+        "Longitude": 2.0,
+        "Name": "",
+        "destinations": [
+            "w",
+            "t",
+            "u",
+            "y"
+        ]
+    },
+    {
+        "Id": "y",
+        "Latitude": 0.0,
+        "Longitude": 3.0,
+        "Name": "",
+        "destinations": [
+            "x",
+            "u"
+        ]
+    },
+    {
+        "Id": "u",
+        "Latitude": 1.0,
+        "Longitude": 3.0,
+        "Name": "",
+        "destinations": [
+            "x",
+            "t",
+            "y"
+        ]
+    },
+    {
+        "Id": "w",
+        "Latitude": 0.0,
+        "Longitude": 1.0,
+        "Name": "",
+        "destinations": [
+            "x",
+            "s",
+            "t"
+        ]
+    },
+    {
+        "Id": "r",
+        "Latitude": 1.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "v",
+            "s"
+        ]
+    },
+    {
+        "Id": "v",
+        "Latitude": 0.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "r"
+        ]
+    },
+    {
+        "Id": "s",
+        "Latitude": 1.0,
+        "Longitude": 1.0,
+        "Name": "",
+        "destinations": [
+            "r",
+            "w"
+        ]
+    }
+]

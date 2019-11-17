@@ -1,0 +1,96 @@
+[
+    {
+        "Id": "t",
+        "Latitude": 0.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "x",
+            "y"
+        ]
+    },
+    {
+        "Id": "x",
+        "Latitude": 0.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "z"
+        ]
+    },
+    {
+        "Id": "w",
+        "Latitude": 0.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "s"
+        ]
+    },
+    {
+        "Id": "v",
+        "Latitude": 0.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "w"
+        ]
+    },
+    {
+        "Id": "r",
+        "Latitude": 0.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "u",
+            "y"
+        ]
+    },
+    {
+        "Id": "u",
+        "Latitude": 0.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "y"
+        ]
+    },
+    {
+        "Id": "y",
+        "Latitude": 0.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "q"
+        ]
+    },
+    {
+        "Id": "z",
+        "Latitude": 0.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "x"
+        ]
+    },
+    {
+        "Id": "s",
+        "Latitude": 0.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "v"
+        ]
+    },
+    {
+        "Id": "q",
+        "Latitude": 0.0,
+        "Longitude": 0.0,
+        "Name": "",
+        "destinations": [
+            "t",
+            "s",
+            "w"
+        ]
+    }
+]

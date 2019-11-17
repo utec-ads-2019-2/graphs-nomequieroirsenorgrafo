@@ -3,7 +3,7 @@
 #define GRAPHS_NOMEQUIEROIRSENORGRAFO_JSON_H
 
 #include "Graph.h"
-#include "nlohmann/json.hpp"
+#include "../vendor/nlohmann/json.hpp"
 
 using json = nlohmann::json;
 
@@ -42,13 +42,13 @@ public:
         }
 
         //Add the edges
-        for (json::iterator it = airports.begin(); it != airports.end(); ++it) {
+        for (auto it = airports.begin(); it != airports.end(); ++it) {
             auto airport = *it;
 
             auto tagFrom = airport.at("Id");
 
             auto destinations = airport.at("destinations");
-            for (json::iterator it2 = destinations.begin(); it2 != destinations.end(); ++it2){
+            for (auto it2 = destinations.begin(); it2 != destinations.end(); ++it2){
                 auto tagTo =  (*it2);
                 //newgraph->addEdge( tagFrom,  tagTo);
                 newgraph->addDirectedEdge( tagFrom,  tagTo);
@@ -61,12 +61,33 @@ public:
         return *newgraph;
     }
 
-/*    graph& getGraph() {
+    bool parseGraph(G graphParam) {
+        json jsonGraph;
+        //Nodes
+        for(auto node = graphParam.firstNode() ; node != graphParam.lastNode() ; ++node) {
+            auto vertex = (*node).second;
 
-    }*/
+            //Edges
+            json destinationsArray = json::array();
+            auto nodeIt = (*node).second;
+            for(auto edgeIt = nodeIt->firstEdge() ; edgeIt != nodeIt->lastEdge() ; edgeIt++) {
+                destinationsArray.push_back( (*edgeIt)->nodes[1]->data);
+            }
 
-    void parseGraph() {
-//  RMP: return void for now.
+            json jsonAirport = {
+                    {"Latitude", vertex->y},
+                    {"Longitude", vertex->x},
+                    {"Name",""},
+                    {"Id", (*node).first},
+                    {"destinations", destinationsArray}
+            };
+            jsonGraph.push_back(jsonAirport);
+        }
+
+        ofstream outputJson(this->fileName);
+        outputJson << std::setw(4) << jsonGraph << endl;
+
+        return true;
     }
 };
 

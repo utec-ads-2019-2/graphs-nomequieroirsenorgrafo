@@ -14,8 +14,10 @@ class Node {
 public:
     typedef typename G::N N;
     typedef typename G::EdgeSeq EdgeSeq;
+    typedef typename EdgeSeq::iterator EdgeIte;
     EdgeSeq edges;
     N data;
+    string name;
     double x, y;
 
 public:
@@ -31,6 +33,14 @@ public:
     bool operator<(const Node &other) const { return this->data < other.data; }
 
     bool operator==(const Node &other) const { return this->data == other.data; }
+
+    EdgeIte firstEdge() {
+        return edges.begin();
+    }
+
+    EdgeIte lastEdge() {
+        return edges.end();
+    }
 
     ~Node() {
         this->edges.clear();
