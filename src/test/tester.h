@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <assert.h>
-#include "src/Graph.h"
+#include "../src/Graph.h"
 
 using namespace std;
 
@@ -47,6 +47,8 @@ public:
     static void testdiGraphToJSON(string fileName);
 
     static void testnondirectedGraphToJSON(string fileName);
+
+    static void testDfs();
 };
 
 #endif

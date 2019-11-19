@@ -2,9 +2,9 @@
 #ifndef GRAPHS_NOMEQUIEROIRSENORGRAFO_GRAPH_H
 #define GRAPHS_NOMEQUIEROIRSENORGRAFO_GRAPH_H
 
-#include "components/node.h"
-#include "components/edge.h"
-#include "components/DisjoinSet.h"
+#include "../components/node.h"
+#include "../components/edge.h"
+#include "../components/DisjoinSet.h"
 
 struct Traits {
     typedef string N;
@@ -28,7 +28,29 @@ private:
     NodeSeq nodes;
     bool directed;
 
+private:
     NodeIte findVertex(N tag) { return nodes.find(tag); }
+
+    void doDFS(self* DFSGraphTree, N currentVertex, unordered_map<N, bool>& visited, unordered_map<N, N>& parent)
+    {
+        if (visited[currentVertex]) { return; }
+        visited[currentVertex] = true;
+//         cout << currentVertex << endl; // Prints the correct order
+
+        if(DFSGraphTree->nodes.find(currentVertex) == DFSGraphTree->nodes.end()){
+            DFSGraphTree->addVertex(this->nodes[currentVertex]);
+        }
+        if(parent[currentVertex] != currentVertex){
+            DFSGraphTree->addEdge(parent[currentVertex], currentVertex);
+        }
+
+        for (auto && next : this->nodes[currentVertex]->edges)
+        {
+            auto nextVertex = next->nodes[1]->data;
+            parent[nextVertex] = currentVertex;
+            doDFS(DFSGraphTree, nextVertex, visited, parent);
+        }
+    }
 
 public:
     Graph() : directed(false) {}
@@ -229,6 +251,18 @@ public:
 		return g;
 	}
 
+
+    auto dfs(N start){
+        unordered_map<N, bool> visited;
+        unordered_map<N, N> parent;
+        auto DFSGraphTree = self(true);
+
+        doDFS(&DFSGraphTree, start, visited, parent);
+
+        return DFSGraphTree;
+    }
+
+
 	void bfsVisitor(N ini, bool visited[]) {
 		queue<N> cola;
 
@@ -377,6 +411,8 @@ public:
 
         return mst;
     }
+
+
 
     auto floydWarshall(){
         unordered_map< N, unordered_map<N, E> > distances;

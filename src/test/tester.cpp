@@ -1,5 +1,5 @@
 #include "tester.h"
-#include "src/Json.h"
+#include "../src/Json.h"
 
 void Tester::testStronglyConnected() {
     auto test1 = new graph(true);
@@ -472,4 +472,42 @@ void Tester::testFromJson(string fileName) {
     //mstKruskal->printGraph();
     printf("Primm: Weight: %4.7f\n", mstPrimm->getEdgesWeightSum() );
     printf("Kruskal: Weight: %4.7f\n", mstKruskal->getEdgesWeightSum() );
+}
+
+void Tester::testDfs() {
+    graph dfsGraph;
+//    dfsGraph.addVertex("a"); dfsGraph.addVertex("b");
+//    dfsGraph.addVertex("c"); dfsGraph.addVertex("d");
+//
+//    dfsGraph.addEdge("a", "b", 1);
+//    dfsGraph.addEdge("b", "c", 2);
+//    dfsGraph.addEdge("c", "d", 3);
+//    dfsGraph.addEdge("d", "a", 4);
+    dfsGraph.addVertex("0"); dfsGraph.addVertex("1"); dfsGraph.addVertex("2");
+    dfsGraph.addVertex("3"); dfsGraph.addVertex("4"); dfsGraph.addVertex("5");
+    dfsGraph.addVertex("6"); dfsGraph.addVertex("7");
+
+    dfsGraph.addEdge("0", "2", 1);
+
+    dfsGraph.addEdge("1", "6", 1);
+
+    dfsGraph.addEdge("2", "1", 1);
+    dfsGraph.addEdge("2", "4", 1);
+    dfsGraph.addEdge("2", "6", 1);
+
+    dfsGraph.addEdge("6", "4", 1);
+    dfsGraph.addEdge("6", "5", 1);
+    dfsGraph.addEdge("6", "7", 1);
+
+    dfsGraph.addEdge("5", "3", 1);
+    dfsGraph.addEdge("5", "7", 1);
+
+
+    auto dfs = dfsGraph.dfs("0");
+//    for (auto & df : dfs){
+//        auto v = df.first;
+//        auto pairIntInt = df.second;
+//        cout << "N = " << v << " Time In = " << pairIntInt.first << " Time Out = " << pairIntInt.second << endl;
+//    }
+    dfs.printGraph();
 }
