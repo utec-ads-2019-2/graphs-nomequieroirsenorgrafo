@@ -633,6 +633,12 @@ public:
         return distance;
     }
 
+    E getHeuristic(node *nodeFrom, node *nodeTo) {
+        auto result1 = pow(nodeTo->x - nodeFrom->x, 2);
+        auto result2 = pow(nodeTo->y - nodeFrom->y, 2);
+
+        return sqrt(result1 + result2);
+    }
     double getDensity() {
         double V = getNumberOfNodes();
         double E = getNumberOfEdges();
@@ -656,6 +662,103 @@ public:
             cout << "}" << endl;
         }
         cout << endl;
+    }
+
+    self a_star_sp(N start, N target) { //A* shortest path
+        unordered_map<N, E> dist; //distance
+        unordered_map<N, E> heuristic; //heuristic to target Node
+        unordered_map<N, N> parent;
+        priority_queue<pair<E, N>, std::vector<pair<E, N>>, greater<>> pq;
+        unordered_map<N, E> qp;
+        E total_dist;
+
+        if ( nodes.find(start) == nodes.end() )
+            throw runtime_error("Start vertex is not part of the graph");
+
+        if ( nodes.find(target) == nodes.end() )
+            throw runtime_error("Target vertex is not part of the graph");
+
+        dist[start] = 0;
+        parent[start] = start;
+
+        for(auto node: this->nodes) {
+            auto inode = node.first;
+
+            if(inode == start)
+                continue;
+
+            dist[inode] = INFINITY;
+            heuristic[inode] = this->getHeuristic(this->nodes[inode], this->nodes[target]);
+        }
+
+        pq.push(make_pair(0, start));
+        qp[start] = 0;
+
+        while(!pq.empty()) {
+            auto u_node = pq.top().second;
+
+            pq.pop();
+            qp.erase(u_node);
+
+            if (u_node == target )
+                break;
+
+            //Neighboors
+            auto edges = this->nodes[u_node]->edges;
+            for (auto edge: edges) {
+                auto w_node = edge->nodes[1]->data;
+                auto distance = dist[u_node] + edge->weight;
+
+                if(qp.find(w_node) != qp.end() and dist[w_node] > distance) {
+                    dist[w_node] = distance;
+                    //total_dist = distance + heuristic[u_node];
+                    parent[w_node] = u_node;
+                } else if (parent.find(w_node) == parent.end() ) {
+                    dist[w_node] = distance;
+                    total_dist = distance + heuristic[u_node];
+                    parent[w_node] = u_node;
+                    pq.push({total_dist, w_node});
+                    qp[w_node] = total_dist;
+                }
+            }
+        }
+
+        return buildGraphFromPath(start, target, parent);
+    }
+
+    self buildGraphFromPath(N start, N target, unordered_map<N, N> path) {
+        self newGraph;
+        newGraph = self(true);
+        bool reachable=false;
+
+        auto prevNode = target;
+        auto tmpNode = this->nodes[prevNode];
+
+        newGraph.addVertex(prevNode, tmpNode->x, tmpNode->y);
+
+        while( path.find(prevNode) != path.end() ) {
+            if (prevNode == start) {
+                reachable=true;
+                break;
+            }
+
+            auto temp = path[prevNode];
+            tmpNode = this->nodes[temp];
+
+            newGraph.addVertex(temp, tmpNode->x, tmpNode->y);
+
+            auto edge = this->findEdge(temp, prevNode);
+            newGraph.addEdge(temp, prevNode, edge->weight );
+
+            prevNode = path[prevNode];
+        }
+
+        if(!reachable) {
+            auto message = "Can't find a path between " + start + " to " + target;
+            throw runtime_error(message);
+        }
+
+        return newGraph;
     }
 //  Iterators
     NodeIte firstNode() const {

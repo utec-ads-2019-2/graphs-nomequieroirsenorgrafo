@@ -474,6 +474,7 @@ void Tester::testFromJson(string fileName) {
     printf("Kruskal: Weight: %4.7f\n", mstKruskal->getEdgesWeightSum() );
 }
 
+
 void Tester::testDfs() {
     graph dfsGraph;
 //    dfsGraph.addVertex("a"); dfsGraph.addVertex("b");
@@ -511,3 +512,81 @@ void Tester::testDfs() {
 //    }
     dfs.printGraph();
 }
+
+void Tester::testAstar() {
+    graph test1(true);
+    test1.addVertex("a", 1, 4);
+    test1.addVertex("b", 5, 1);
+    test1.addVertex("c", 5, 9);
+    test1.addVertex("d", 8, 1);
+    test1.addVertex("e", 8, 5);
+    test1.addVertex("f", 11, 4);
+
+    test1.addEdge("a", "b", 316);
+    test1.addEdge("a", "c", 316);
+    test1.addEdge("b", "d", 167);
+    test1.addEdge("b", "e", 367);
+    test1.addEdge("c", "d", 467);
+    test1.addEdge("c", "e", 267);
+    test1.addEdge("d", "e", 200);
+    test1.addEdge("d", "f", 317);
+    test1.addEdge("e", "f", 217);
+
+    auto startNode = "a";
+    auto targetNode = "f";
+    cout << "Testing A* shorstest path from " <<startNode << " to "<<targetNode<<endl;
+    auto aStar = test1.a_star_sp(startNode, targetNode);
+    aStar.printGraph();
+}
+
+void Tester::testAstar_2() {
+    graph test1(true);
+    test1.addVertex("s", 1, 4);
+    test1.addVertex("h", 3, 1);
+    test1.addVertex("f", 5, 4);
+    test1.addVertex("a", 3, 7);
+    test1.addVertex("e", 7, 1);
+    test1.addVertex("b", 5, 7);
+    test1.addVertex("c", 7, 7);
+    test1.addVertex("g", 10, 1);
+    test1.addVertex("d", 12, 4);
+
+    test1.addEdge("s","a", 5);
+    test1.addEdge("s","h", 2);
+    test1.addEdge("h","a", 2);
+    test1.addEdge("a","f", 3);
+    test1.addEdge("f","h", 2);
+    test1.addEdge("a","b", 7);
+    test1.addEdge("f","b", 2);
+    test1.addEdge("f","e", 6);
+    test1.addEdge("h","e", 9);
+    test1.addEdge("b","e", 5);
+    test1.addEdge("b","c", 8);
+    test1.addEdge("b","g", 7);
+    test1.addEdge("e","g", 2);
+    test1.addEdge("g","c", 3);
+    test1.addEdge("c","d", 4);
+
+    auto startNode = "s";
+    auto targetNode = "d";
+    cout << "Testing A* shorstest path from " <<startNode << " to "<<targetNode<<endl;
+    auto aStar = test1.a_star_sp(startNode, targetNode);
+    aStar.printGraph();
+}
+
+void Tester::testAstarfromJSON(string fileName) {
+    auto jsonInput = new Json<graph>(fileName);
+    auto graphTest = jsonInput->parseJson();
+
+    auto startNode = "7252";
+    auto targetNode = "2789"; //"3199";
+    cout << "Testing A* shorstest path of " <<fileName<<" from airport "<< startNode <<
+    " to airport"<< targetNode <<endl;
+
+    auto aStar = graphTest.a_star_sp(startNode, targetNode);
+    aStar.printGraph();
+
+    auto jsonOutput = new Json<graph>("../data/astartsp.json");
+    jsonOutput->parseGraph(aStar);
+}
+

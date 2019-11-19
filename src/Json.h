@@ -35,8 +35,8 @@ public:
         for (json::iterator it = airports.begin(); it != airports.end(); ++it) {
             auto airport = *it;
 
-            auto x = airport.at("Latitude").get<string>();
-            auto y = airport.at("Longitude").get<string>();
+            auto y = airport.at("Latitude").get<string>();
+            auto x = airport.at("Longitude").get<string>();
 
             newgraph->addVertex(airport.at("Id"), stof(x), stof(y));
         }
@@ -75,12 +75,18 @@ public:
             }
 
             json jsonAirport = {
-                    {"Latitude", vertex->y},
-                    {"Longitude", vertex->x},
+                    {"Latitude", to_string(vertex->y)},
+                    {"Longitude", to_string(vertex->x)},
                     {"Name",""},
+                    {"City",""},
+                    {"Country",""},
                     {"Id", (*node).first},
                     {"destinations", destinationsArray}
             };
+
+            //jsonAirport["Latitude"] = vertex->y;
+            //jsonAirport["Longitude"] = vertex->x;
+
             jsonGraph.push_back(jsonAirport);
         }
 

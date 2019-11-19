@@ -5,6 +5,7 @@ using namespace std;
 
 int main() {
 
+
 //    Tester::testnondirectedGraphToJSON("../data/graphToJsonNonDir.json");
 //
 //    Tester::testdiGraphToJSON("../data/graphToJsonDir.json");
@@ -14,6 +15,11 @@ int main() {
 //    Tester::testBipartiteFromJson("../data/bipartito.json");
 //    Tester::testConnectedFromJson("../data/conexo.json");
 
+    //Tester::testnondirectedGraphToJSON("../data/graphToJsonNonDir.json");
+
+    //Tester::testdiGraphToJSON("../data/graphToJsonDir.json");
+
+
 //    Tester::testGraphcreation();
 //    Tester::testConnected();
 //    Tester::testBipartite();
@@ -21,9 +27,23 @@ int main() {
 //    Tester::testKruskal();
 //    Tester::testStronglyConnected();
 
+
     Tester::testDfs();
 
-//    delete json1;
+    //Tester::testBipartiteFromJson("../data/bipartito.json");
+    //Tester::testConnectedFromJson("../data/conexo.json");
+
+    //Tester::testGraphcreation();
+    //Tester::testConnected();
+    //Tester::testBipartite();
+    //Tester::testPrimm();
+    //Tester::testKruskal();
+    //Tester::testStronglyConnected();
+
+
+    //Tester::testAstar();
+    //Tester::testAstar_2();
+//    Tester::testAstarfromJSON("../data/airports2710.json");
 
     return 0;
 }
