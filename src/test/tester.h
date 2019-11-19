@@ -47,6 +47,12 @@ public:
     static void testdiGraphToJSON(string fileName);
 
     static void testnondirectedGraphToJSON(string fileName);
+
+    static void testAstar();
+
+    static void testAstar_2();
+
+    static void testAstarfromJSON(string fileName);
 };
 
 #endif
