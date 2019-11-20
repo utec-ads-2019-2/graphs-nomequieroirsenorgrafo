@@ -214,6 +214,7 @@ public:
     }
 
     node *findNode(N tag) {
+
         if (nodes.find(tag) != nodes.end()) {
             node *resultantNode = new node(tag);
             return resultantNode;
@@ -412,7 +413,54 @@ public:
         return mst;
     }
 
+    auto bellmanFord(N start)
+    {
+        if (this->findVertex(start) == this->nodes.end()) { throw runtime_error("Vertex is not part of the graph"); }
 
+        unordered_map<N, E> distances;
+        unordered_map<N, N> path;
+        EdgeSeq edges;
+
+        // INITIALIZE-SINGLE-SOURCE
+        for (auto && u : this->nodes) {
+            distances[u.first] = INFINITY;
+            path[u.first] = u.first;
+            for (auto && uEdges: u.second->edges) {
+                edges.push_back(uEdges);
+            }
+        }
+        distances[start] = 0;
+
+        unordered_map<N, pair<N, E>> parents;
+        parents[start] = std::make_pair(start, 0);
+
+        // RELAX
+        for (int i = 0; i < this->getNumberOfNodes() - 1; ++i)
+        {
+            for (auto && edge: edges)
+            {
+                auto vertexFrom = path[edge->nodes[0]->data];
+                auto vertexTo = path[edge->nodes[1]->data];
+                auto weight = edge->weight;
+                if (distances[vertexTo] > distances[vertexFrom] + weight && distances[vertexFrom] != INFINITY) {
+                    distances[vertexTo] = distances[vertexFrom] + weight;
+                    parents[vertexTo] = std::make_pair(vertexFrom, weight);
+                }
+            }
+        }
+
+        // DETERMINE IF THE GRAPH CONTAINS NEGATIVE WEIGHT CYCLES
+        for (auto && edge : edges) {
+            auto vertexFrom = path[edge->nodes[0]->data];
+            auto vertexTo = path[edge->nodes[1]->data];
+            auto weight = edge->weight;
+            if (distances[vertexTo] > distances[vertexFrom] + weight && distances[vertexFrom] != INFINITY) {
+//                throw runtime_error("Graph contains a cycle with negative weights!");
+                return false;
+            }
+        }
+        return true;
+    }
 
     auto floydWarshall(){
         unordered_map< N, unordered_map<N, E> > distances;
@@ -615,10 +663,8 @@ public:
             }
         }
 
-        if (this->directed)
-            return sum;
-        else
-            return sum / 2;
+        if (this->directed) { return sum; }
+        else { return sum / 2; }
     }
 
     E getDistance(node *nodeFrom, node *nodeTo) {

@@ -28,8 +28,8 @@ int main() {
 //    Tester::testStronglyConnected();
 
 
-    Tester::testDfs();
-
+//    Tester::testDfs();
+    Tester::testBellmanFord();
     //Tester::testBipartiteFromJson("../data/bipartito.json");
     //Tester::testConnectedFromJson("../data/conexo.json");
 

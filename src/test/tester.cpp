@@ -513,6 +513,8 @@ void Tester::testDfs() {
     dfs.printGraph();
 }
 
+
+
 void Tester::testAstar() {
     graph test1(true);
     test1.addVertex("a", 1, 4);
@@ -588,5 +590,60 @@ void Tester::testAstarfromJSON(string fileName) {
 
     auto jsonOutput = new Json<graph>("../data/astartsp.json");
     jsonOutput->parseGraph(aStar);
+}
+
+void Tester::testBellmanFord() {
+    graph Graph(true);
+    Graph.addVertex("a"); Graph.addVertex("b"); Graph.addVertex("c");
+    Graph.addVertex("d"); Graph.addVertex("e"); Graph.addVertex("f");
+
+    Graph.addEdge("a", "b", 10);
+
+    Graph.addEdge("b", "c", 1);
+
+    Graph.addEdge("c", "e", 3);
+
+    Graph.addEdge("e", "f", 22);
+    Graph.addEdge("e", "d", -10);
+
+    Graph.addEdge("d", "b", 4);
+
+    auto bellman = Graph.bellmanFord("s");
+
+//    Graph.addVertex("s"); Graph.addVertex("t"); Graph.addVertex("x");
+//    Graph.addVertex("y"); Graph.addVertex("z");
+//
+//    Graph.addEdge("s", "t", 6);
+//    Graph.addEdge("s", "y", 7);
+//
+//    Graph.addEdge("y", "z", 9);
+//    Graph.addEdge("y", "x", -3);
+//
+//    Graph.addEdge("x", "t", -2);
+//
+//    Graph.addEdge("z", "s", 2);
+//    Graph.addEdge("z", "x", 7);
+//
+//    Graph.addEdge("t", "x", 5);
+//    Graph.addEdge("t", "y", 8);
+//    Graph.addEdge("t", "z", -4);
+//
+//    auto bellman = Graph.bellmanFord("s");
+//    bellman->printGraph();
+//    for (auto && item: bellman){
+//        cout << item.first << endl;
+//        item.second->printGraph();
+//    }
+    cout << bellman << endl;
+//    for (auto && item : bellman) {
+//        (item.first).printGraph();
+////        for (auto && itMap: item.second) {
+////            cout << itMap.first << itMap.second << endl;
+////        }
+//        cout << endl << endl;
+//    }
+//    cout << bellman << endl;
+//    bellman.printGraph();
+
 }
 

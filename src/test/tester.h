@@ -56,7 +56,7 @@ public:
     static void testAstar_2();
 
     static void testAstarfromJSON(string fileName);
-
+    static void testBellmanFord();
 };
 
 #endif
