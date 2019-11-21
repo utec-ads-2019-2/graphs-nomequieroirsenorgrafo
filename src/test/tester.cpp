@@ -608,7 +608,7 @@ void Tester::testBellmanFord() {
 
     Graph.addEdge("d", "b", 4);
 
-    auto bellman = Graph.bellmanFord("s");
+    auto bellman = Graph.bellmanFord("a");
 
 //    Graph.addVertex("s"); Graph.addVertex("t"); Graph.addVertex("x");
 //    Graph.addVertex("y"); Graph.addVertex("z");
@@ -645,5 +645,40 @@ void Tester::testBellmanFord() {
 //    cout << bellman << endl;
 //    bellman.printGraph();
 
+}
+
+void Tester::testDijkstra() {
+    graph Graph(true);
+    Graph.addVertex("0"); Graph.addVertex("1"); Graph.addVertex("2"); Graph.addVertex("3");
+    Graph.addVertex("4"); Graph.addVertex("5"); Graph.addVertex("6"); Graph.addVertex("7");
+
+    Graph.addEdge("0", "1", 8);
+    Graph.addEdge("0", "3", 2);
+
+    Graph.addEdge("3", "7", 9);
+
+    Graph.addEdge("4", "2", 3);
+
+    Graph.addEdge("5", "1", 2);
+
+    Graph.addEdge("6", "4", 9);
+
+    Graph.addEdge("7", "5", 5);
+    Graph.addEdge("7", "6", 6);
+
+    auto dijkstra = Graph.dijkstra("0");
+    dijkstra.printGraph();
+//    auto dijkstra = Graph.dijkstra("0", "3");
+
+//    dijkstra.printGraph();
+
+//    for (auto && item: dijkstra) {
+//        cout << item.first << endl;
+//        item.second->printGraph();
+//    }
+//    for (auto && item: dijkstra){
+//        cout << item.first << endl;
+//        item.second->printGraph();
+//    }
 }
 

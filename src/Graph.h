@@ -57,7 +57,6 @@ public:
     Graph(bool directed) : directed(directed) {}
 
     Graph(const Graph &oldGraph) { //Copy constructor
-
         if ( this->nodes.size() == 0 ) {
             for( auto nodeIte = oldGraph.firstNode() ;
                  nodeIte != oldGraph.lastNode() ;
@@ -65,7 +64,6 @@ public:
                 this->nodes.insert( *nodeIte );
             }
         }
-
     }
 
     bool isDirected(){ return directed; }
@@ -335,6 +333,70 @@ public:
         return predecesor;
     }
 
+    auto dijkstra(N start, N end){
+        auto parentsWithWeight = dodijkstra(start);
+//        auto dijkstraGraph = retracePath(start, end, parentsWithWeight);
+        unordered_map<N, N> parents;
+        for (auto && parent : parentsWithWeight){
+            parents[parent.first] = parentsWithWeight[parent.first].first;
+        }
+        auto dijkstraGraph = buildGraphFromPath(start, end, parents);
+        return dijkstraGraph;
+    }
+
+    auto dijkstra(N start){
+        auto graphTree = self(this->directed);
+        auto parents = dodijkstra(start);
+        for (auto iterNod = this->nodes.begin(); iterNod != this->nodes.end(); ++iterNod) {
+            graphTree.addVertex(iterNod->first);
+        }
+
+        for (auto iterNod = this->nodes.begin(); iterNod != this->nodes.end(); ++iterNod)
+        {
+            for(auto && e : this->nodes[iterNod->first]->edges)
+            {
+                auto dest = e->nodes[1]->data;
+                if (/*parents[dest].first != dest && */!graphTree.findEdge(parents[dest].first, dest)) {
+                    graphTree.addEdge(parents[dest].first, dest, parents[dest].second);
+                }
+            }
+        }
+        return graphTree;
+    }
+
+    // SHOULD BE PRIVATE
+    auto dodijkstra(N start){
+        unordered_map<N, E> distances;
+        unordered_map< N, pair<N, E> > parents;
+        priority_queue<pair<E, N>, vector<pair<E,N>>, greater<pair<E, N>>> minPQ;
+
+        parents[start] = make_pair(start, 0);
+        minPQ.push(make_pair(0, start));
+
+        while(!minPQ.empty()){
+            auto current = minPQ.top().second; minPQ.pop();
+            auto currentDistance = distances[current];
+
+            for(auto && edge : this->nodes[current]->edges){
+                auto adjacentVertex = edge->nodes[1]->data;
+                auto candidateDistance = edge->weight + currentDistance;
+                if(distances.find(adjacentVertex) == distances.end()){
+                    parents[adjacentVertex] = make_pair(current, edge->weight);
+                    distances[adjacentVertex] = candidateDistance;
+                    minPQ.push(make_pair(candidateDistance, adjacentVertex));
+                    continue;
+                }
+                // RELAX
+                if(distances[adjacentVertex] > candidateDistance){
+                    distances[adjacentVertex] = candidateDistance;
+                    parents[adjacentVertex] = make_pair(current, edge->weight);
+                    minPQ.push(make_pair(candidateDistance, current));
+                }
+            }
+        }
+        return parents;
+    }
+
     self *prim(N start) {
         if ( nodes.find(start) == nodes.end() ) { throw runtime_error("Selected vertex is not part of the graph"); }
         if ( directed ) { throw runtime_error("Prim only works on undirected graphs"); }
@@ -460,6 +522,10 @@ public:
             }
         }
         return true;
+//        unordered_map<N, self*> answer;
+//        for(auto n : this->nodes)
+//            answer[n.first] = buildGraphFromPath(start, n.first, parents);
+//        return answer;
     }
 
     auto floydWarshall(){
@@ -806,6 +872,21 @@ public:
 
         return newGraph;
     }
+
+
+
+    Graph<Tr> *retracePath(N start, N end, unordered_map<N, pair<N, E>> parents){
+        if(parents.find(end) == parents.end()) return nullptr;
+        auto path = new Graph<Tr>(directed);
+        path->addVertex(nodes[end]);
+        do{
+            path->addVertex(nodes[parents[end].first]);
+            path->addEdge(parents[end].first, end, parents[end].second);
+            end = parents[end].first;
+        }while(parents[end].first != end);
+        return path;
+    }
+
 //  Iterators
     NodeIte firstNode() const {
         return this->nodes.begin();

@@ -29,7 +29,8 @@ int main() {
 
 
 //    Tester::testDfs();
-    Tester::testBellmanFord();
+//    Tester::testBellmanFord();
+    Tester::testDijkstra();
     //Tester::testBipartiteFromJson("../data/bipartito.json");
     //Tester::testConnectedFromJson("../data/conexo.json");
 
