@@ -30,7 +30,9 @@ int main() {
 
 //    Tester::testDfs();
 //    Tester::testBellmanFord();
-    Tester::testDijkstra();
+//    Tester::testDijkstra();
+//    Tester::testDijkstrafromJSON("../data/airports2710.json");
+    Tester::testDijkstrafromJSONOnlyStart("../data/airports2710.json");
     //Tester::testBipartiteFromJson("../data/bipartito.json");
     //Tester::testConnectedFromJson("../data/conexo.json");
 

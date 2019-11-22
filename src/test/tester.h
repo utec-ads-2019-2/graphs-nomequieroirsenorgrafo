@@ -58,6 +58,8 @@ public:
     static void testAstarfromJSON(string fileName);
     static void testBellmanFord();
     static void testDijkstra();
+    static void testDijkstrafromJSON(const string&);
+    static void testDijkstrafromJSONOnlyStart(const string&);
 };
 
 #endif

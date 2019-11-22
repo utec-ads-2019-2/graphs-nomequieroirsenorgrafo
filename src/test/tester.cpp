@@ -682,3 +682,33 @@ void Tester::testDijkstra() {
 //    }
 }
 
+void Tester::testDijkstrafromJSON(const string& fileName) {
+    auto jsonInput = new Json<graph>(fileName);
+    auto graphTest = jsonInput->parseJson();
+
+    auto startNode = "7252";
+    auto targetNode = "2789"; //"3199";
+    cout << "Testing A* shorstest path of " <<fileName<<" from airport "<< startNode <<
+         " to airport"<< targetNode <<endl;
+
+    auto dijkstra = graphTest.dijkstra(startNode, targetNode);
+    dijkstra.printGraph();
+
+    auto jsonOutput = new Json<graph>("../data/dijkstrasp.json");
+    jsonOutput->parseGraph(dijkstra);
+}
+
+void Tester::testDijkstrafromJSONOnlyStart(const string& fileName){
+    auto jsonInput = new Json<graph>(fileName);
+    auto graphTest = jsonInput->parseJson();
+
+    auto startNode = "7252";
+//    auto targetNode = "2789"; //"3199";
+    cout << "Testing A* shorstest path of " <<fileName<<" from airport "<< startNode <<endl;
+
+    auto dijkstra = graphTest.dijkstra(startNode);
+//    dijkstra.printGraph();
+
+    auto jsonOutput = new Json<graph>("../data/dijkstraspOnlyStart.json");
+    jsonOutput->parseGraph(dijkstra);
+}

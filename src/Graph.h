@@ -335,17 +335,16 @@ public:
 
     auto dijkstra(N start, N end){
         auto parentsWithWeight = dodijkstra(start);
-//        auto dijkstraGraph = retracePath(start, end, parentsWithWeight);
         unordered_map<N, N> parents;
         for (auto && parent : parentsWithWeight){
             parents[parent.first] = parentsWithWeight[parent.first].first;
         }
-        auto dijkstraGraph = buildGraphFromPath(start, end, parents);
+        auto dijkstraGraph = this->buildGraphFromPath(start, end, parents);
         return dijkstraGraph;
     }
 
     auto dijkstra(N start){
-        auto graphTree = self(this->directed);
+        auto graphTree = self(true);
         auto parents = dodijkstra(start);
         for (auto iterNod = this->nodes.begin(); iterNod != this->nodes.end(); ++iterNod) {
             graphTree.addVertex(iterNod->first);
@@ -356,7 +355,7 @@ public:
             for(auto && e : this->nodes[iterNod->first]->edges)
             {
                 auto dest = e->nodes[1]->data;
-                if (/*parents[dest].first != dest && */!graphTree.findEdge(parents[dest].first, dest)) {
+                if (parents[dest].first != dest /*&& !graphTree.findEdge(parents[dest].first, dest)*/) {
                     graphTree.addEdge(parents[dest].first, dest, parents[dest].second);
                 }
             }
