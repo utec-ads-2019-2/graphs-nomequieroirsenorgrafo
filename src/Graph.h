@@ -41,7 +41,8 @@ private:
             DFSGraphTree->addVertex(this->nodes[currentVertex]);
         }
         if(parent[currentVertex] != currentVertex){
-            DFSGraphTree->addEdge(parent[currentVertex], currentVertex);
+            //DFSGraphTree->addEdge(parent[currentVertex], currentVertex);
+            DFSGraphTree->addEdge(parent[currentVertex], currentVertex, 0);
         }
 
         for (auto && next : this->nodes[currentVertex]->edges)
@@ -50,6 +51,38 @@ private:
             parent[nextVertex] = currentVertex;
             doDFS(DFSGraphTree, nextVertex, visited, parent);
         }
+    }
+
+    auto dodijkstra(N start){
+        unordered_map<N, E> distances;
+        unordered_map< N, pair<N, E> > parents;
+        priority_queue<pair<E, N>, vector<pair<E,N>>, greater<pair<E, N>>> minPQ;
+
+        parents[start] = make_pair(start, 0);
+        minPQ.push(make_pair(0, start));
+
+        while(!minPQ.empty()){
+            auto current = minPQ.top().second; minPQ.pop();
+            auto currentDistance = distances[current];
+
+            for(auto && edge : this->nodes[current]->edges){
+                auto adjacentVertex = edge->nodes[1]->data;
+                auto candidateDistance = edge->weight + currentDistance;
+                if(distances.find(adjacentVertex) == distances.end()){
+                    parents[adjacentVertex] = make_pair(current, edge->weight);
+                    distances[adjacentVertex] = candidateDistance;
+                    minPQ.push(make_pair(candidateDistance, adjacentVertex));
+                    continue;
+                }
+                // RELAX
+                if(distances[adjacentVertex] > candidateDistance){
+                    distances[adjacentVertex] = candidateDistance;
+                    parents[adjacentVertex] = make_pair(current, edge->weight);
+                    minPQ.push(make_pair(candidateDistance, current));
+                }
+            }
+        }
+        return parents;
     }
 
 public:
@@ -67,18 +100,13 @@ public:
     }
 
     bool isDirected(){ return directed; }
-
-    void addVertex(node *oldNode) {
-        node *newNode = new node(oldNode);
-        nodes[oldNode->data] = newNode;
-    }
-
-    node *addVertex(N tag) {
+    //mark for deletion by RMP
+    /*node *addVertex(N tag) {
         auto newNode = new node(tag); //Node or vertex
         nodes.insert({tag, newNode});
 
         return newNode;
-    }
+    }*/
 
     node *addVertex(N tag, double x, double y) {
         auto newNode = new node(tag, x, y); //Node or vertex
@@ -86,27 +114,39 @@ public:
 
         return newNode;
     }
+
+    void addVertex(node *oldNode) {
+        node *newNode = new node(oldNode);
+        nodes[oldNode->data] = newNode;
+    }
+
     bool addEdge(N from, N to, E weight) {
         if ((nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end())) { return false; }
+        E newWeight;
+
+        if(weight)
+            newWeight = getDistance(nodes[from], nodes[to]);
+        else
+            newWeight = weight;
 
         node *nodeFrom = nodes[from];
         node *nodeTo = nodes[to];
 
         if (this->directed) {
-            auto edgeFromTo = new edge(nodeFrom, nodeTo, weight);
+            auto edgeFromTo = new edge(nodeFrom, nodeTo, newWeight);
             nodeFrom->edges.emplace_back(edgeFromTo);
             return true;
         }
 
-        auto edgeFromTo = new edge(nodeFrom, nodeTo, weight);
+        auto edgeFromTo = new edge(nodeFrom, nodeTo, newWeight);
         nodeFrom->edges.emplace_back(edgeFromTo);
-        auto edgeToFrom = new edge(nodeTo, nodeFrom, weight);
+        auto edgeToFrom = new edge(nodeTo, nodeFrom, newWeight);
         nodeTo->edges.emplace_back(edgeToFrom);
 
         return true;
     }
-
-    bool addEdge(N from, N to) {
+    //mark for deletion by RMP
+    /*bool addEdge(N from, N to) {
         if ((nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end())) { return false; }
 
         auto weight = getDistance(nodes[from], nodes[to]);
@@ -126,7 +166,7 @@ public:
         nodeTo->edges.emplace_back(edgeToFrom);
 
         return true;
-    }
+    }*/
 
     bool addDirectedEdge(N from, N to) {
         if ((nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end())) { return false; }
@@ -210,15 +250,15 @@ public:
         else
             return true;
     }
-
-    node *findNode(N tag) {
+    //mark for deletion by RMP
+    /*node *findNode(N tag) {
 
         if (nodes.find(tag) != nodes.end()) {
             node *resultantNode = new node(tag);
             return resultantNode;
         }
         return nullptr;
-    }
+    }*/
 
     edge *findEdge(N from, N to) {
         auto nodeFrom = nodes[from];
@@ -332,8 +372,15 @@ public:
 
         return predecesor;
     }
+    auto dijkstra(N start){ //Start only
+        auto parents = dodijkstra(start);
 
-    auto dijkstra(N start, N end){
+        auto graphTree = buildGraphFromMultPaths(start, parents);
+
+        return graphTree;
+    }
+
+    auto dijkstra(N start, N end){ //Start -> Target
         auto parentsWithWeight = dodijkstra(start);
         unordered_map<N, N> parents;
         for (auto && parent : parentsWithWeight){
@@ -341,59 +388,6 @@ public:
         }
         auto dijkstraGraph = this->buildGraphFromPath(start, end, parents);
         return dijkstraGraph;
-    }
-
-    auto dijkstra(N start){
-        auto graphTree = self(true);
-        auto parents = dodijkstra(start);
-        for (auto iterNod = this->nodes.begin(); iterNod != this->nodes.end(); ++iterNod) {
-            graphTree.addVertex(iterNod->first);
-        }
-
-        for (auto iterNod = this->nodes.begin(); iterNod != this->nodes.end(); ++iterNod)
-        {
-            for(auto && e : this->nodes[iterNod->first]->edges)
-            {
-                auto dest = e->nodes[1]->data;
-                if (parents[dest].first != dest /*&& !graphTree.findEdge(parents[dest].first, dest)*/) {
-                    graphTree.addEdge(parents[dest].first, dest, parents[dest].second);
-                }
-            }
-        }
-        return graphTree;
-    }
-
-    // SHOULD BE PRIVATE
-    auto dodijkstra(N start){
-        unordered_map<N, E> distances;
-        unordered_map< N, pair<N, E> > parents;
-        priority_queue<pair<E, N>, vector<pair<E,N>>, greater<pair<E, N>>> minPQ;
-
-        parents[start] = make_pair(start, 0);
-        minPQ.push(make_pair(0, start));
-
-        while(!minPQ.empty()){
-            auto current = minPQ.top().second; minPQ.pop();
-            auto currentDistance = distances[current];
-
-            for(auto && edge : this->nodes[current]->edges){
-                auto adjacentVertex = edge->nodes[1]->data;
-                auto candidateDistance = edge->weight + currentDistance;
-                if(distances.find(adjacentVertex) == distances.end()){
-                    parents[adjacentVertex] = make_pair(current, edge->weight);
-                    distances[adjacentVertex] = candidateDistance;
-                    minPQ.push(make_pair(candidateDistance, adjacentVertex));
-                    continue;
-                }
-                // RELAX
-                if(distances[adjacentVertex] > candidateDistance){
-                    distances[adjacentVertex] = candidateDistance;
-                    parents[adjacentVertex] = make_pair(current, edge->weight);
-                    minPQ.push(make_pair(candidateDistance, current));
-                }
-            }
-        }
-        return parents;
     }
 
     self *prim(N start) {
@@ -410,7 +404,8 @@ public:
         origin[start] = start;
 
         for (auto iterNod = nodes.begin(); iterNod != nodes.end(); ++iterNod) {
-            mst->addVertex(iterNod->first);
+            //mst->addVertex(iterNod->first);
+            mst->addVertex(iterNod->first, 0, 0);
         }
 
         while (!Q.empty())
@@ -446,7 +441,8 @@ public:
         multimap<E, pair<N, N> > sorted;
 
         for (auto iterNod = nodes.begin(); iterNod != nodes.end(); ++iterNod) {
-            mst->addVertex(iterNod->first);
+            //mst->addVertex(iterNod->first);
+            mst->addVertex(iterNod->first, 0, 0);
         }
 
         //Get the edged sort ascendent
@@ -476,6 +472,9 @@ public:
 
     auto bellmanFord(N start)
     {
+        pair<bool, self> result;
+        bool resultBool;
+
         if (this->findVertex(start) == this->nodes.end()) { throw runtime_error("Vertex is not part of the graph"); }
 
         unordered_map<N, E> distances;
@@ -517,10 +516,16 @@ public:
             auto weight = edge->weight;
             if (distances[vertexTo] > distances[vertexFrom] + weight && distances[vertexFrom] != INFINITY) {
 //                throw runtime_error("Graph contains a cycle with negative weights!");
-                return false;
+                resultBool = false;
             }
         }
-        return true;
+        resultBool = true;
+
+        result.first = resultBool;
+        if(result.first)
+            result.second = buildGraphFromMultPaths(start, parents);
+
+        return result;
 //        unordered_map<N, self*> answer;
 //        for(auto n : this->nodes)
 //            answer[n.first] = buildGraphFromPath(start, n.first, parents);
@@ -872,9 +877,32 @@ public:
         return newGraph;
     }
 
+    self buildGraphFromMultPaths(N start, unordered_map<N, pair<N, E> > parents) {
+        auto graphTree = self(true);
 
+        // Building the tree with shortest paths
+        // Adding vertex
+        for ( auto itParent = parents.begin() ; itParent != parents.end() ; ++itParent) {
+            auto result = findVertex(itParent->first);
+            graphTree.addVertex( result->second );
+        }
+        // Adding edges
+        for ( auto itParent = parents.begin() ; itParent != parents.end() ; ++itParent) {
+            auto idnodeParent = itParent->first;
+            auto aux = itParent->second;
+            auto idnode = aux.first;
 
-    Graph<Tr> *retracePath(N start, N end, unordered_map<N, pair<N, E>> parents){
+            if( idnode == idnodeParent)
+                continue;
+
+            graphTree.addEdge(idnode, idnodeParent, 0);
+        }
+
+        return graphTree;
+    }
+
+    //??? mark for deletion by RMP
+    /*Graph<Tr> *retracePath(N start, N end, unordered_map<N, pair<N, E>> parents){
         if(parents.find(end) == parents.end()) return nullptr;
         auto path = new Graph<Tr>(directed);
         path->addVertex(nodes[end]);
@@ -884,7 +912,7 @@ public:
             end = parents[end].first;
         }while(parents[end].first != end);
         return path;
-    }
+    }*/
 
 //  Iterators
     NodeIte firstNode() const {

@@ -84,9 +84,6 @@ public:
                     {"destinations", destinationsArray}
             };
 
-            //jsonAirport["Latitude"] = vertex->y;
-            //jsonAirport["Longitude"] = vertex->x;
-
             jsonGraph.push_back(jsonAirport);
         }
 

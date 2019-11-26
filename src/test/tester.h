@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <assert.h>
-#include "../src/Graph.h"
+#include "src/Graph.h"
 
 using namespace std;
 
@@ -48,7 +48,6 @@ public:
 
     static void testnondirectedGraphToJSON(string fileName);
 
-
     static void testDfs();
 
     static void testAstar();
@@ -56,9 +55,15 @@ public:
     static void testAstar_2();
 
     static void testAstarfromJSON(string fileName);
+
     static void testBellmanFord();
+
+    static void testBellmanFordfromJSON(string fileName);
+
     static void testDijkstra();
+
     static void testDijkstrafromJSON(const string&);
+
     static void testDijkstrafromJSONOnlyStart(const string&);
 };
 

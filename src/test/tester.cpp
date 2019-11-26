@@ -1,20 +1,20 @@
 #include "tester.h"
-#include "../src/Json.h"
+#include "src/Json.h"
 
 void Tester::testStronglyConnected() {
     auto test1 = new graph(true);
 
     // CORMEN DIRECTED GRAPH
-    test1->addVertex("q");
-    test1->addVertex("r");
-    test1->addVertex("s");
-    test1->addVertex("t");
-    test1->addVertex("u");
-    test1->addVertex("v");
-    test1->addVertex("w");
-    test1->addVertex("x");
-    test1->addVertex("y");
-    test1->addVertex("z");
+    test1->addVertex("q", 0, 0);
+    test1->addVertex("r", 0, 0);
+    test1->addVertex("s", 0, 0);
+    test1->addVertex("t", 0, 0);
+    test1->addVertex("u", 0, 0);
+    test1->addVertex("v", 0, 0);
+    test1->addVertex("w", 0, 0);
+    test1->addVertex("x", 0, 0);
+    test1->addVertex("y", 0, 0);
+    test1->addVertex("z", 0, 0);
 
     test1->addEdge("r", "u", 1);
     test1->addEdge("r", "y", 1);
@@ -60,16 +60,16 @@ void Tester::testConnected() {
     test1.addVertex("y", 3, 0);
     test1.addVertex("u", 3, 1);
 
-    test1.addEdge("v", "r");
-    test1.addEdge("r", "s");
-    test1.addEdge("w", "x");
-    test1.addEdge("s", "w");
-    test1.addEdge("w", "t");
-    test1.addEdge("x", "t");
-    test1.addEdge("x", "u");
-    test1.addEdge("x", "y");
-    test1.addEdge("t", "u");
-    test1.addEdge("u", "y");
+    test1.addEdge("v", "r", 0);
+    test1.addEdge("r", "s", 0);
+    test1.addEdge("w", "x", 0);
+    test1.addEdge("s", "w", 0);
+    test1.addEdge("w", "t", 0);
+    test1.addEdge("x", "t", 0);
+    test1.addEdge("x", "u", 0);
+    test1.addEdge("x", "y", 0);
+    test1.addEdge("t", "u", 0);
+    test1.addEdge("u", "y", 0);
 
     //test1.printGraph();
     //test1.bfs("s");
@@ -89,14 +89,14 @@ void Tester::testConnected() {
     test2.addVertex("23", 0, 0);
     test2.addVertex("24", 0, 0);
 
-    test2.addEdge("9", "26");
-    test2.addEdge("9", "19");
-    test2.addEdge("9", "18");
-    test2.addEdge("26", "11");
-    test2.addEdge("9", "19");
-    test2.addEdge("13", "19");
-    test2.addEdge("13", "5");
-    test2.addEdge("23", "24");
+    test2.addEdge("9", "26", 0);
+    test2.addEdge("9", "19", 0);
+    test2.addEdge("9", "18", 0);
+    test2.addEdge("26", "11", 0);
+    test2.addEdge("9", "19", 0);
+    test2.addEdge("13", "19", 0);
+    test2.addEdge("13", "5", 0);
+    test2.addEdge("23", "24", 0);
 
     ASSERT(!test2.isConnected(), "Wrong result in ", msg2);
 
@@ -105,12 +105,12 @@ void Tester::testConnected() {
 void Tester::testBipartite() {
     auto test1 = new graph();
     cout << "Test bipartite" << endl;
-    test1->addVertex("a");
-    test1->addVertex("b");
-    test1->addVertex("c");
-    test1->addVertex("d");
-    test1->addVertex("e");
-    test1->addVertex("f");
+    test1->addVertex("a", 0, 0);
+    test1->addVertex("b", 0, 0);
+    test1->addVertex("c", 0, 0);
+    test1->addVertex("d", 0, 0);
+    test1->addVertex("e", 0, 0);
+    test1->addVertex("f", 0, 0);
 
     test1->addEdge("a", "b", 1);
     test1->addEdge("b", "c", 1);
@@ -127,11 +127,11 @@ void Tester::testBipartite() {
     delete test1;
 
     auto test2 = new graph();
-    test2->addVertex("a");
-    test2->addVertex("b");
-    test2->addVertex("c");
-    test2->addVertex("d");
-    test2->addVertex("e");
+    test2->addVertex("a", 0, 0);
+    test2->addVertex("b", 0, 0);
+    test2->addVertex("c", 0, 0);
+    test2->addVertex("d", 0, 0);
+    test2->addVertex("e", 0, 0);
 
     test2->addEdge("a", "b", 1);
     test2->addEdge("b", "c", 1);
@@ -201,9 +201,9 @@ void Tester::testKruskal() {
 graph Tester::CormmenExample() {
     graph cormen;
 
-    cormen.addVertex("a"); cormen.addVertex("b"); cormen.addVertex("c");
-    cormen.addVertex("d"); cormen.addVertex("e"); cormen.addVertex("f");
-    cormen.addVertex("g"); cormen.addVertex("h"); cormen.addVertex("i");
+    cormen.addVertex("a", 0, 0); cormen.addVertex("b", 0, 0); cormen.addVertex("c", 0, 0);
+    cormen.addVertex("d", 0, 0); cormen.addVertex("e", 0, 0); cormen.addVertex("f", 0, 0);
+    cormen.addVertex("g", 0, 0); cormen.addVertex("h", 0, 0); cormen.addVertex("i", 0, 0);
 
     cormen.addEdge("a", "b", 4);
     cormen.addEdge("a", "h", 8);
@@ -240,13 +240,13 @@ void Tester::testGraphcreation() {
     ASSERT(test1->getNumberOfNodes() == cantVertex, "Wrong result in ",
            msg2);
 
-    test1->addEdge("a", "b");
-    test1->addEdge("b", "c");
-    test1->addEdge("c", "d");
-    test1->addEdge("d", "e");
-    test1->addEdge("e", "f");
-    test1->addEdge("f", "a");
-    test1->addEdge("d", "a");
+    test1->addEdge("a", "b", 0);
+    test1->addEdge("b", "c", 0);
+    test1->addEdge("c", "d", 0);
+    test1->addEdge("d", "e", 0);
+    test1->addEdge("e", "f", 0);
+    test1->addEdge("f", "a", 0);
+    test1->addEdge("d", "a", 0);
 
     msg2 = "Adding edges";
     ASSERT(test1->getNumberOfEdges() == cantEdges, "Wrong result in ",
@@ -290,16 +290,16 @@ void Tester::testGraphcreation() {
 //  Directed graph
     cout<< "Test for directed graph" << endl;
     test1 = new graph(true);
-    test1->addVertex("q");
-    test1->addVertex("s");
-    test1->addVertex("v");
-    test1->addVertex("w");
-    test1->addVertex("t");
-    test1->addVertex("x");
-    test1->addVertex("z");
-    test1->addVertex("y");
-    test1->addVertex("r");
-    test1->addVertex("u");
+    test1->addVertex("q", 0, 0);
+    test1->addVertex("s", 0, 0);
+    test1->addVertex("v", 0, 0);
+    test1->addVertex("w", 0, 0);
+    test1->addVertex("t", 0, 0);
+    test1->addVertex("x", 0, 0);
+    test1->addVertex("z", 0, 0);
+    test1->addVertex("y", 0, 0);
+    test1->addVertex("r", 0, 0);
+    test1->addVertex("u", 0, 0);
 
     cantVertex = 10;
     msg2 = "Adding vertex";
@@ -389,16 +389,16 @@ void Tester::testdiGraphToJSON(string fileName) {
     cout<< "Test for generate JSON from directed graph" << endl;
     //auto test2 = new graph(true); // doesn't work, call destructor
     auto test2 =  graph(true);
-    test2.addVertex("q");
-    test2.addVertex("s");
-    test2.addVertex("v");
-    test2.addVertex("w");
-    test2.addVertex("t");
-    test2.addVertex("x");
-    test2.addVertex("z");
-    test2.addVertex("y");
-    test2.addVertex("r");
-    test2.addVertex("u");
+    test2.addVertex("q", 0, 0);
+    test2.addVertex("s", 0, 0);
+    test2.addVertex("v", 0, 0);
+    test2.addVertex("w", 0, 0);
+    test2.addVertex("t", 0, 0);
+    test2.addVertex("x", 0, 0);
+    test2.addVertex("z", 0, 0);
+    test2.addVertex("y", 0, 0);
+    test2.addVertex("r", 0, 0);
+    test2.addVertex("u", 0, 0);
 
     test2.addEdge("q","t",3);
     test2.addEdge("q","s",3);
@@ -432,16 +432,16 @@ void Tester::testnondirectedGraphToJSON(string fileName) {
     test1.addVertex("y", 3, 0);
     test1.addVertex("u", 3, 1);
 
-    test1.addEdge("v", "r");
-    test1.addEdge("r", "s");
-    test1.addEdge("w", "x");
-    test1.addEdge("s", "w");
-    test1.addEdge("w", "t");
-    test1.addEdge("x", "t");
-    test1.addEdge("x", "u");
-    test1.addEdge("x", "y");
-    test1.addEdge("t", "u");
-    test1.addEdge("u", "y");
+    test1.addEdge("v", "r", 0);
+    test1.addEdge("r", "s", 0);
+    test1.addEdge("w", "x", 0);
+    test1.addEdge("s", "w", 0);
+    test1.addEdge("w", "t", 0);
+    test1.addEdge("x", "t", 0);
+    test1.addEdge("x", "u", 0);
+    test1.addEdge("x", "y", 0);
+    test1.addEdge("t", "u", 0);
+    test1.addEdge("u", "y", 0);
 
     auto json2 = new Json<graph>(fileName);
     json2->parseGraph(test1);
@@ -484,9 +484,14 @@ void Tester::testDfs() {
 //    dfsGraph.addEdge("b", "c", 2);
 //    dfsGraph.addEdge("c", "d", 3);
 //    dfsGraph.addEdge("d", "a", 4);
-    dfsGraph.addVertex("0"); dfsGraph.addVertex("1"); dfsGraph.addVertex("2");
-    dfsGraph.addVertex("3"); dfsGraph.addVertex("4"); dfsGraph.addVertex("5");
-    dfsGraph.addVertex("6"); dfsGraph.addVertex("7");
+    dfsGraph.addVertex("0", 0, 0);
+    dfsGraph.addVertex("1", 0, 0);
+    dfsGraph.addVertex("2", 0, 0);
+    dfsGraph.addVertex("3", 0, 0);
+    dfsGraph.addVertex("4", 0, 0);
+    dfsGraph.addVertex("5", 0, 0);
+    dfsGraph.addVertex("6", 0, 0);
+    dfsGraph.addVertex("7", 0, 0);
 
     dfsGraph.addEdge("0", "2", 1);
 
@@ -594,8 +599,8 @@ void Tester::testAstarfromJSON(string fileName) {
 
 void Tester::testBellmanFord() {
     graph Graph(true);
-    Graph.addVertex("a"); Graph.addVertex("b"); Graph.addVertex("c");
-    Graph.addVertex("d"); Graph.addVertex("e"); Graph.addVertex("f");
+    Graph.addVertex("a", 0, 0); Graph.addVertex("b", 0, 0); Graph.addVertex("c", 0, 0);
+    Graph.addVertex("d", 0, 0); Graph.addVertex("e", 0, 0); Graph.addVertex("f", 0, 0);
 
     Graph.addEdge("a", "b", 10);
 
@@ -634,7 +639,7 @@ void Tester::testBellmanFord() {
 //        cout << item.first << endl;
 //        item.second->printGraph();
 //    }
-    cout << bellman << endl;
+    cout << bellman.first << endl;
 //    for (auto && item : bellman) {
 //        (item.first).printGraph();
 ////        for (auto && itMap: item.second) {
@@ -647,10 +652,25 @@ void Tester::testBellmanFord() {
 
 }
 
+void Tester::testBellmanFordfromJSON(string fileName) {
+    auto jsonInput = new Json<graph>(fileName);
+    auto graphTest = jsonInput->parseJson();
+
+    auto startNode = "7252";
+    //auto targetNode = "2789"; //"3199";
+    cout << "Testing Bellman Ford shorstest path of " <<fileName<<" from airport "<< startNode <<endl;
+
+    auto bellmanResult = graphTest.bellmanFord(startNode);
+    auto bellmanBool = bellmanResult.first ? "Yes" : "No";
+    cout << "Result ? " << bellmanBool << endl;
+    bellmanResult.second.printGraph();
+}
+
 void Tester::testDijkstra() {
     graph Graph(true);
-    Graph.addVertex("0"); Graph.addVertex("1"); Graph.addVertex("2"); Graph.addVertex("3");
-    Graph.addVertex("4"); Graph.addVertex("5"); Graph.addVertex("6"); Graph.addVertex("7");
+    Graph.addVertex("0", 0, 0); Graph.addVertex("1", 0, 0); Graph.addVertex("2", 0, 0);
+    Graph.addVertex("3", 0, 0); Graph.addVertex("4", 0, 0); Graph.addVertex("5", 0, 0);
+    Graph.addVertex("6", 0, 0); Graph.addVertex("7", 0, 0);
 
     Graph.addEdge("0", "1", 8);
     Graph.addEdge("0", "3", 2);
