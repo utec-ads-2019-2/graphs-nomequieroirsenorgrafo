@@ -54,9 +54,11 @@ public:
 
     static void testAstar_2();
 
-    static void testAstarfromJSON(string fileName);
+    static void testAstarfromJSON(string filenameIn, string filenameOut);
 
     static void testBellmanFord();
+
+    static void testBellmanFord2();
 
     static void testBellmanFordfromJSON(string fileName);
 

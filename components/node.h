@@ -29,6 +29,16 @@ public:
         this->x = node->x;
         this->y = node->y;
     }
+    Node(const Node &oldNode) { //Copy constructor
+        if ( this->edges.size() == 0 ) {
+            for( auto edgeIte = oldNode.firstEdge() ;
+                 edgeIte != oldNode.lastEdge() ;
+                 edgeIte++) {
+                this->edges.insert( *edgeIte );
+            }
+        }
+    }
+
     int sizeEdges(){ return edges.size(); }
     bool operator<(const Node &other) const { return this->data < other.data; }
 
@@ -43,7 +53,8 @@ public:
     }
 
     ~Node() {
-        this->edges.clear();
+        if( this->edges.size() > 0)
+            this->edges.clear();
     }
 };
 

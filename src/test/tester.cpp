@@ -508,7 +508,6 @@ void Tester::testDfs() {
     dfsGraph.addEdge("5", "3", 1);
     dfsGraph.addEdge("5", "7", 1);
 
-
     auto dfs = dfsGraph.dfs("0");
 //    for (auto & df : dfs){
 //        auto v = df.first;
@@ -517,8 +516,6 @@ void Tester::testDfs() {
 //    }
     dfs.printGraph();
 }
-
-
 
 void Tester::testAstar() {
     graph test1(true);
@@ -581,19 +578,19 @@ void Tester::testAstar_2() {
     aStar.printGraph();
 }
 
-void Tester::testAstarfromJSON(string fileName) {
-    auto jsonInput = new Json<graph>(fileName);
+void Tester::testAstarfromJSON(string filenameIn, string filenameOut) {
+    auto jsonInput = new Json<graph>(filenameIn);
     auto graphTest = jsonInput->parseJson();
-
+    //Lima: 2789 Vietnam: 3199
     auto startNode = "7252";
-    auto targetNode = "2789"; //"3199";
-    cout << "Testing A* shorstest path of " <<fileName<<" from airport "<< startNode <<
-    " to airport"<< targetNode <<endl;
+    auto targetNode = "3199"; //"6114";
+    cout << "Testing A* shorstest path of " <<filenameIn<<" from airport "<< startNode <<
+    " to airport "<< targetNode <<endl;
 
     auto aStar = graphTest.a_star_sp(startNode, targetNode);
     aStar.printGraph();
 
-    auto jsonOutput = new Json<graph>("../data/astartsp.json");
+    auto jsonOutput = new Json<graph>(filenameOut);
     jsonOutput->parseGraph(aStar);
 }
 
@@ -615,41 +612,47 @@ void Tester::testBellmanFord() {
 
     auto bellman = Graph.bellmanFord("a");
 
-//    Graph.addVertex("s"); Graph.addVertex("t"); Graph.addVertex("x");
-//    Graph.addVertex("y"); Graph.addVertex("z");
-//
-//    Graph.addEdge("s", "t", 6);
-//    Graph.addEdge("s", "y", 7);
-//
-//    Graph.addEdge("y", "z", 9);
-//    Graph.addEdge("y", "x", -3);
-//
-//    Graph.addEdge("x", "t", -2);
-//
-//    Graph.addEdge("z", "s", 2);
-//    Graph.addEdge("z", "x", 7);
-//
-//    Graph.addEdge("t", "x", 5);
-//    Graph.addEdge("t", "y", 8);
-//    Graph.addEdge("t", "z", -4);
-//
-//    auto bellman = Graph.bellmanFord("s");
-//    bellman->printGraph();
-//    for (auto && item: bellman){
-//        cout << item.first << endl;
-//        item.second->printGraph();
-//    }
     cout << bellman.first << endl;
-//    for (auto && item : bellman) {
-//        (item.first).printGraph();
-////        for (auto && itMap: item.second) {
-////            cout << itMap.first << itMap.second << endl;
-////        }
-//        cout << endl << endl;
-//    }
-//    cout << bellman << endl;
-//    bellman.printGraph();
 
+    bellman.second.printGraph();
+
+}
+
+void Tester::testBellmanFord2() {
+    graph test1(true);
+    test1.addVertex("s", 1, 4);
+    test1.addVertex("h", 3, 1);
+    test1.addVertex("f", 5, 4);
+    test1.addVertex("a", 3, 7);
+    test1.addVertex("e", 7, 1);
+    test1.addVertex("b", 5, 7);
+    test1.addVertex("c", 7, 7);
+    test1.addVertex("g", 10, 1);
+    test1.addVertex("d", 12, 4);
+
+    test1.addEdge("s","a", 5);
+    test1.addEdge("s","h", 2);
+    test1.addEdge("h","a", 2);
+    test1.addEdge("a","f", 3);
+    test1.addEdge("f","h", -2);
+    test1.addEdge("a","b", 7);
+    test1.addEdge("f","b", 2);
+    test1.addEdge("f","e", 6);
+    test1.addEdge("h","e", 9);
+    test1.addEdge("b","e", 5);
+    test1.addEdge("b","c", 8);
+    test1.addEdge("b","g", 7);
+    test1.addEdge("e","g", 2);
+    test1.addEdge("g","c", 3);
+    test1.addEdge("c","d", 4);
+
+    auto startNode = "s";
+
+    cout << "Testing Bellman Ford shorstest path from " <<startNode<<endl;
+    auto bellmanResult = test1.bellmanFord(startNode);
+    auto bellmanBool = bellmanResult.first ? "Yes" : "No";
+    cout << "Result ? " << bellmanBool << endl;
+    bellmanResult.second.printGraph();
 }
 
 void Tester::testBellmanFordfromJSON(string fileName) {
@@ -663,7 +666,11 @@ void Tester::testBellmanFordfromJSON(string fileName) {
     auto bellmanResult = graphTest.bellmanFord(startNode);
     auto bellmanBool = bellmanResult.first ? "Yes" : "No";
     cout << "Result ? " << bellmanBool << endl;
-    bellmanResult.second.printGraph();
+
+    auto jsonOutput = new Json<graph>("../data/bellmanford.json");
+    jsonOutput->parseGraph(bellmanResult.second);
+    cout << "Nodes -> " << bellmanResult.second.getNumberOfNodes() << " Edges -> "
+        << bellmanResult.second.getNumberOfEdges() << endl;
 }
 
 void Tester::testDijkstra() {
@@ -707,8 +714,8 @@ void Tester::testDijkstrafromJSON(const string& fileName) {
     auto graphTest = jsonInput->parseJson();
 
     auto startNode = "7252";
-    auto targetNode = "2789"; //"3199";
-    cout << "Testing A* shorstest path of " <<fileName<<" from airport "<< startNode <<
+    auto targetNode = "3199"; // "2789";
+    cout << "Testing Dijkstra shorstest path of " <<fileName<<" from airport "<< startNode <<
          " to airport"<< targetNode <<endl;
 
     auto dijkstra = graphTest.dijkstra(startNode, targetNode);
@@ -724,11 +731,13 @@ void Tester::testDijkstrafromJSONOnlyStart(const string& fileName){
 
     auto startNode = "7252";
 //    auto targetNode = "2789"; //"3199";
-    cout << "Testing A* shorstest path of " <<fileName<<" from airport "<< startNode <<endl;
+    cout << "Testing Dijkstra shorstest path of " <<fileName<<" from airport "<< startNode <<endl;
 
     auto dijkstra = graphTest.dijkstra(startNode);
 //    dijkstra.printGraph();
 
     auto jsonOutput = new Json<graph>("../data/dijkstraspOnlyStart.json");
     jsonOutput->parseGraph(dijkstra);
+    cout << "Nodes -> " << dijkstra.getNumberOfNodes() << " Edges -> "
+         << dijkstra.getNumberOfEdges() << endl;
 }

@@ -30,21 +30,19 @@ int main() {
 //    Tester::testBellmanFord();
 //    Tester::testBellmanFordfromJSON("../data/airports2710.json");
 //    Tester::testDijkstra();
-//    Tester::testDijkstrafromJSON("../data/airports2710.json");
-//    Tester::testDijkstrafromJSONOnlyStart("../data/airports2710.json");
+    Tester::testDijkstrafromJSON("../data/airports2710.json");
+    Tester::testDijkstrafromJSONOnlyStart("../data/airports2710.json");
     //Tester::testBipartiteFromJson("../data/bipartito.json");
     //Tester::testConnectedFromJson("../data/conexo.json");
 
-    //Tester::testGraphcreation();
-    //Tester::testConnected();
-    //Tester::testBipartite();
     //Tester::testPrimm();
     //Tester::testKruskal();
     //Tester::testStronglyConnected();
-
+    Tester::testBellmanFordfromJSON("../data/airports2710.json");
+    Tester::testBellmanFord2();
     Tester::testAstar();
     Tester::testAstar_2();
-    Tester::testAstarfromJSON("../data/airports2710.json");
+    Tester::testAstarfromJSON("../data/airports2710.json", "../data/astartsp.json");
 
     return 0;
 }

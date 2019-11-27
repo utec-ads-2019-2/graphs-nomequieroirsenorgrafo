@@ -100,13 +100,6 @@ public:
     }
 
     bool isDirected(){ return directed; }
-    //mark for deletion by RMP
-    /*node *addVertex(N tag) {
-        auto newNode = new node(tag); //Node or vertex
-        nodes.insert({tag, newNode});
-
-        return newNode;
-    }*/
 
     node *addVertex(N tag, double x, double y) {
         auto newNode = new node(tag, x, y); //Node or vertex
@@ -124,7 +117,7 @@ public:
         if ((nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end())) { return false; }
         E newWeight;
 
-        if(weight)
+        if(!weight)
             newWeight = getDistance(nodes[from], nodes[to]);
         else
             newWeight = weight;
@@ -145,28 +138,6 @@ public:
 
         return true;
     }
-    //mark for deletion by RMP
-    /*bool addEdge(N from, N to) {
-        if ((nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end())) { return false; }
-
-        auto weight = getDistance(nodes[from], nodes[to]);
-
-        node *nodeFrom = nodes[from];
-        node *nodeTo = nodes[to];
-
-        if (this->directed) {
-            auto newEdge = new edge(nodeFrom, nodeTo, weight);
-            nodeFrom->edges.emplace_back(newEdge);
-            return true;
-        }
-
-        auto edgeFromTo = new edge(nodeFrom, nodeTo, weight);
-        nodeFrom->edges.emplace_back(edgeFromTo);
-        auto edgeToFrom = new edge(nodeTo, nodeFrom, weight);
-        nodeTo->edges.emplace_back(edgeToFrom);
-
-        return true;
-    }*/
 
     bool addDirectedEdge(N from, N to) {
         if ((nodes.find(from) == nodes.end()) || (nodes.find(to) == nodes.end())) { return false; }
@@ -238,7 +209,6 @@ public:
                 }
             }
         }
-
         return true;
     }
 
@@ -250,15 +220,6 @@ public:
         else
             return true;
     }
-    //mark for deletion by RMP
-    /*node *findNode(N tag) {
-
-        if (nodes.find(tag) != nodes.end()) {
-            node *resultantNode = new node(tag);
-            return resultantNode;
-        }
-        return nullptr;
-    }*/
 
     edge *findEdge(N from, N to) {
         auto nodeFrom = nodes[from];
@@ -382,11 +343,11 @@ public:
 
     auto dijkstra(N start, N end){ //Start -> Target
         auto parentsWithWeight = dodijkstra(start);
-        unordered_map<N, N> parents;
-        for (auto && parent : parentsWithWeight){
-            parents[parent.first] = parentsWithWeight[parent.first].first;
-        }
-        auto dijkstraGraph = this->buildGraphFromPath(start, end, parents);
+        //unordered_map<N, N> parents;
+        //for (auto && parent : parentsWithWeight){
+        //    parents[parent.first] = parentsWithWeight[parent.first].first;
+        //}
+        auto dijkstraGraph = this->buildGraphFromPath(start, end, parentsWithWeight);
         return dijkstraGraph;
     }
 
@@ -526,10 +487,6 @@ public:
             result.second = buildGraphFromMultPaths(start, parents);
 
         return result;
-//        unordered_map<N, self*> answer;
-//        for(auto n : this->nodes)
-//            answer[n.first] = buildGraphFromPath(start, n.first, parents);
-//        return answer;
     }
 
     auto floydWarshall(){
@@ -755,6 +712,7 @@ public:
 
         return sqrt(result1 + result2);
     }
+
     double getDensity() {
         double V = getNumberOfNodes();
         double E = getNumberOfEdges();
@@ -783,7 +741,7 @@ public:
     self a_star_sp(N start, N target) { //A* shortest path
         unordered_map<N, E> dist; //distance
         unordered_map<N, E> heuristic; //heuristic to target Node
-        unordered_map<N, N> parent;
+        unordered_map<N, pair<N, E> > parent;
         priority_queue<pair<E, N>, std::vector<pair<E, N>>, greater<>> pq;
         unordered_map<N, E> qp;
         E total_dist;
@@ -795,7 +753,7 @@ public:
             throw runtime_error("Target vertex is not part of the graph");
 
         dist[start] = 0;
-        parent[start] = start;
+        parent[start] = {start, 0};
 
         for(auto node: this->nodes) {
             auto inode = node.first;
@@ -823,16 +781,18 @@ public:
             auto edges = this->nodes[u_node]->edges;
             for (auto edge: edges) {
                 auto w_node = edge->nodes[1]->data;
-                auto distance = dist[u_node] + edge->weight;
+                auto weight = edge->weight;
+                auto distance = dist[u_node] + weight;
 
                 if(qp.find(w_node) != qp.end() and dist[w_node] > distance) {
                     dist[w_node] = distance;
-                    //total_dist = distance + heuristic[u_node];
-                    parent[w_node] = u_node;
+                    parent[w_node] = {u_node, weight};
+                    //parent[w_node] = u_node;
                 } else if (parent.find(w_node) == parent.end() ) {
                     dist[w_node] = distance;
                     total_dist = distance + heuristic[u_node];
-                    parent[w_node] = u_node;
+                    parent[w_node] = {u_node, weight};
+                    //parent[w_node] = u_node;
                     pq.push({total_dist, w_node});
                     qp[w_node] = total_dist;
                 }
@@ -842,7 +802,7 @@ public:
         return buildGraphFromPath(start, target, parent);
     }
 
-    self buildGraphFromPath(N start, N target, unordered_map<N, N> path) {
+    self buildGraphFromPath(N start, N target, unordered_map<N, pair<N, E> > path) {
         self newGraph;
         newGraph = self(true);
         bool reachable=false;
@@ -858,15 +818,16 @@ public:
                 break;
             }
 
-            auto temp = path[prevNode];
+            auto temp = path[prevNode].first;
             tmpNode = this->nodes[temp];
 
             newGraph.addVertex(temp, tmpNode->x, tmpNode->y);
 
-            auto edge = this->findEdge(temp, prevNode);
-            newGraph.addEdge(temp, prevNode, edge->weight );
+            //auto edge = this->findEdge(temp, prevNode);
+            auto weight = path[prevNode].second; //edge->weight
+            newGraph.addEdge(temp, prevNode, weight );
 
-            prevNode = path[prevNode];
+            prevNode = path[prevNode].first;
         }
 
         if(!reachable) {
@@ -901,17 +862,20 @@ public:
         return graphTree;
     }
 
-    //??? mark for deletion by RMP
-    /*Graph<Tr> *retracePath(N start, N end, unordered_map<N, pair<N, E>> parents){
-        if(parents.find(end) == parents.end()) return nullptr;
-        auto path = new Graph<Tr>(directed);
-        path->addVertex(nodes[end]);
-        do{
-            path->addVertex(nodes[parents[end].first]);
-            path->addEdge(parents[end].first, end, parents[end].second);
-            end = parents[end].first;
-        }while(parents[end].first != end);
-        return path;
+ /*   self& operator=(const self &rhs) {
+        if (this != &rhs) {                  // do not copy to yourself
+            this->directed = rhs.directed;
+
+            if ( this->nodes.size() == 0 ) {
+                for( auto nodeIte = rhs.firstNode() ;
+                    nodeIte != rhs.lastNode() ;
+                    nodeIte++) {
+                    this->nodes.insert( *nodeIte );
+                }
+            }
+        }
+
+        return *this;
     }*/
 
 //  Iterators
@@ -923,6 +887,18 @@ public:
         return this->nodes.end();
     }
     ~Graph() {
+        /*for( auto nodeforDel: this->nodes) {
+            auto oldNode = nodeforDel.second;
+
+            for( auto edgeIte = oldNode->firstEdge() ;
+                 edgeIte != oldNode->lastEdge() ;
+                 edgeIte++) {
+                auto oldEgde = *(edgeIte);
+                this->deleteEdge( oldEgde->nodes[0]->data, oldEgde->nodes[1]->data );
+            }
+
+           this->deleteNode(oldNode->data);
+        }*/
         this->nodes.clear();
     }
 };

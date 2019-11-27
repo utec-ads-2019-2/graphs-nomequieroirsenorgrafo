@@ -37,8 +37,10 @@ public:
 
             auto y = airport.at("Latitude").get<string>();
             auto x = airport.at("Longitude").get<string>();
+            auto name = airport.at("Name").get<string>();
 
             newgraph->addVertex(airport.at("Id"), stof(x), stof(y));
+
         }
 
         //Add the edges
@@ -77,7 +79,7 @@ public:
             json jsonAirport = {
                     {"Latitude", to_string(vertex->y)},
                     {"Longitude", to_string(vertex->x)},
-                    {"Name",""},
+                    {"Name",vertex->name},
                     {"City",""},
                     {"Country",""},
                     {"Id", (*node).first},
