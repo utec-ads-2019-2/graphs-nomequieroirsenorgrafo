@@ -3,8 +3,8 @@
 
 #include <stdexcept>
 #include <iostream>
-#include <assert.h>
-#include "src/Graph.h"
+#include <cassert>
+#include "../src/Graph.h"
 
 using namespace std;
 

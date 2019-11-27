@@ -1,5 +1,5 @@
 #include "tester.h"
-#include "src/Json.h"
+#include "../src/Json.h"
 
 void Tester::testStronglyConnected() {
     auto test1 = new graph(true);
@@ -495,17 +495,17 @@ void Tester::testDfs() {
 
     dfsGraph.addEdge("0", "2", 1);
 
-    dfsGraph.addEdge("1", "6", 1);
+    dfsGraph.addEdge("1", "6", 2);
 
     dfsGraph.addEdge("2", "1", 1);
     dfsGraph.addEdge("2", "4", 1);
     dfsGraph.addEdge("2", "6", 1);
 
     dfsGraph.addEdge("6", "4", 1);
-    dfsGraph.addEdge("6", "5", 1);
+    dfsGraph.addEdge("6", "5", 5);
     dfsGraph.addEdge("6", "7", 1);
 
-    dfsGraph.addEdge("5", "3", 1);
+    dfsGraph.addEdge("5", "3", 3);
     dfsGraph.addEdge("5", "7", 1);
 
     auto dfs = dfsGraph.dfs("0");
@@ -596,8 +596,8 @@ void Tester::testAstarfromJSON(string filenameIn, string filenameOut) {
 
 void Tester::testBellmanFord() {
     graph Graph(true);
-    Graph.addVertex("a", 0, 0); Graph.addVertex("b", 0, 0); Graph.addVertex("c", 0, 0);
-    Graph.addVertex("d", 0, 0); Graph.addVertex("e", 0, 0); Graph.addVertex("f", 0, 0);
+    Graph.addVertex("a", 2, 0); Graph.addVertex("b", 3, 0); Graph.addVertex("c", 6, 0);
+    Graph.addVertex("d", 0, 2); Graph.addVertex("e", 0, 5); Graph.addVertex("f", 0, 7);
 
     Graph.addEdge("a", "b", 10);
 
@@ -612,7 +612,7 @@ void Tester::testBellmanFord() {
 
     auto bellman = Graph.bellmanFord("a");
 
-    cout << bellman.first << endl;
+    cout << std::boolalpha << bellman.first << endl;
 
     bellman.second.printGraph();
 
@@ -630,21 +630,21 @@ void Tester::testBellmanFord2() {
     test1.addVertex("g", 10, 1);
     test1.addVertex("d", 12, 4);
 
-    test1.addEdge("s","a", 5);
-    test1.addEdge("s","h", 2);
-    test1.addEdge("h","a", 2);
-    test1.addEdge("a","f", 3);
-    test1.addEdge("f","h", -2);
-    test1.addEdge("a","b", 7);
-    test1.addEdge("f","b", 2);
-    test1.addEdge("f","e", 6);
-    test1.addEdge("h","e", 9);
-    test1.addEdge("b","e", 5);
-    test1.addEdge("b","c", 8);
-    test1.addEdge("b","g", 7);
-    test1.addEdge("e","g", 2);
-    test1.addEdge("g","c", 3);
-    test1.addEdge("c","d", 4);
+    test1.addDirectedEdge("s","a"/*, 5*/);
+    test1.addDirectedEdge("s","h"/*, 2*/);
+    test1.addDirectedEdge("h","a"/*, 2*/);
+    test1.addDirectedEdge("a","f"/*, 3*/);
+    test1.addDirectedEdge("f","h"/*, -2*/);
+    test1.addDirectedEdge("a","b"/*, 7*/);
+    test1.addDirectedEdge("f","b"/*, 2*/);
+    test1.addDirectedEdge("f","e"/*, 6*/);
+    test1.addDirectedEdge("h","e"/*, 9*/);
+    test1.addDirectedEdge("b","e"/*, 5*/);
+    test1.addDirectedEdge("b","c"/*, 8*/);
+    test1.addDirectedEdge("b","g"/*, 7*/);
+    test1.addDirectedEdge("e","g"/*, 2*/);
+    test1.addDirectedEdge("g","c"/*, 3*/);
+    test1.addDirectedEdge("c","d"/*, 4*/);
 
     auto startNode = "s";
 
@@ -693,7 +693,7 @@ void Tester::testDijkstra() {
     Graph.addEdge("7", "5", 5);
     Graph.addEdge("7", "6", 6);
 
-    auto dijkstra = Graph.dijkstra("0");
+    auto dijkstra = Graph.dijkstra("0"); // Testing dijkstra only start on a little graph
     dijkstra.printGraph();
 //    auto dijkstra = Graph.dijkstra("0", "3");
 

@@ -31,7 +31,7 @@ private:
 private:
     NodeIte findVertex(N tag) { return nodes.find(tag); }
 
-    void doDFS(self* DFSGraphTree, N currentVertex, unordered_map<N, bool>& visited, unordered_map<N, N>& parent)
+    void doDFS(self* DFSGraphTree, N currentVertex, unordered_map<N, bool>& visited, unordered_map<N, pair<N,E>>& parent)
     {
         if (visited[currentVertex]) { return; }
         visited[currentVertex] = true;
@@ -40,15 +40,17 @@ private:
         if(DFSGraphTree->nodes.find(currentVertex) == DFSGraphTree->nodes.end()){
             DFSGraphTree->addVertex(this->nodes[currentVertex]);
         }
-        if(parent[currentVertex] != currentVertex){
+        if(parent[currentVertex].first != currentVertex){
             //DFSGraphTree->addEdge(parent[currentVertex], currentVertex);
-            DFSGraphTree->addEdge(parent[currentVertex], currentVertex, 0);
+            DFSGraphTree->addEdge(parent[currentVertex].first, currentVertex, parent[currentVertex].second);
         }
 
         for (auto && next : this->nodes[currentVertex]->edges)
         {
             auto nextVertex = next->nodes[1]->data;
-            parent[nextVertex] = currentVertex;
+            auto weight= next->weight;
+            parent[nextVertex].first = currentVertex;
+            parent[nextVertex].second = weight;
             doDFS(DFSGraphTree, nextVertex, visited, parent);
         }
     }
@@ -254,7 +256,7 @@ public:
 
     auto dfs(N start){
         unordered_map<N, bool> visited;
-        unordered_map<N, N> parent;
+        unordered_map<N, pair<N,E>> parent;
         auto DFSGraphTree = self(true);
 
         doDFS(&DFSGraphTree, start, visited, parent);
@@ -457,7 +459,7 @@ public:
 
         // RELAX
         for (int i = 0; i < this->getNumberOfNodes() - 1; ++i)
-        {
+        {//    Tester::testBellmanFord2();
             for (auto && edge: edges)
             {
                 auto vertexFrom = path[edge->nodes[0]->data];
@@ -852,11 +854,12 @@ public:
             auto idnodeParent = itParent->first;
             auto aux = itParent->second;
             auto idnode = aux.first;
+            auto weight = aux.second;
 
             if( idnode == idnodeParent)
                 continue;
 
-            graphTree.addEdge(idnode, idnodeParent, 0);
+            graphTree.addEdge(idnode, idnodeParent, weight);
         }
 
         return graphTree;

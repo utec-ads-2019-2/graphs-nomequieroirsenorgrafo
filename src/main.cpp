@@ -33,9 +33,9 @@ int main() {
 
 
 //-----------------------------PROJECT-2------------------------------------
-//    Tester::testDfs();
-//    Tester::testBellmanFord();
-//    Tester::testBellmanFord2();
+//    Tester::testDfs(); // Testing a graph from "DFS Visualization" Website
+    Tester::testBellmanFord();
+    Tester::testBellmanFord2();
 //    Tester::testBellmanFordfromJSON("../data/airports2710.json");
 
 //    Tester::testAstar();
